@@ -8,7 +8,7 @@
     <ProjectReference Include="..\pixstock.service.gateway\Pixstock.Service.Gateway.csproj" />
     <ProjectReference Include="..\pixstock.common.model\Pixstock.Common.Model.csproj" />
     <ProjectReference Include="..\pixstock.common.core\Pixstock.Common.Core.csproj" />
-    <ProjectReference Include="..\pixstock.parent\hyperion.pf.entity\Hyperion.Pf.Entity.csproj" />
+    <ProjectReference Include="..\hyperion.pf.entity\Hyperion.Pf.Entity.csproj" />
   </ItemGroup>
 
   <ItemGroup>
