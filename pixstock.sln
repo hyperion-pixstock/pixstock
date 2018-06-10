@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pixstock.Service.Model", "p
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hyperion.Pf.Entity", "hyperion.pf.entity\Hyperion.Pf.Entity.csproj", "{BDBEC220-AF40-46C7-99C7-9369FF4E82CD}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hyperion.Pf.Workflow", "hyperion.pf.workflow\Hyperion.Pf.Workflow\Hyperion.Pf.Workflow.csproj", "{1ED49D21-41D2-4902-B34F-02626607FE3E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +155,18 @@ Global
 		{BDBEC220-AF40-46C7-99C7-9369FF4E82CD}.Release|x64.Build.0 = Release|Any CPU
 		{BDBEC220-AF40-46C7-99C7-9369FF4E82CD}.Release|x86.ActiveCfg = Release|Any CPU
 		{BDBEC220-AF40-46C7-99C7-9369FF4E82CD}.Release|x86.Build.0 = Release|Any CPU
+		{1ED49D21-41D2-4902-B34F-02626607FE3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ED49D21-41D2-4902-B34F-02626607FE3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ED49D21-41D2-4902-B34F-02626607FE3E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1ED49D21-41D2-4902-B34F-02626607FE3E}.Debug|x64.Build.0 = Debug|Any CPU
+		{1ED49D21-41D2-4902-B34F-02626607FE3E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1ED49D21-41D2-4902-B34F-02626607FE3E}.Debug|x86.Build.0 = Debug|Any CPU
+		{1ED49D21-41D2-4902-B34F-02626607FE3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ED49D21-41D2-4902-B34F-02626607FE3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ED49D21-41D2-4902-B34F-02626607FE3E}.Release|x64.ActiveCfg = Release|Any CPU
+		{1ED49D21-41D2-4902-B34F-02626607FE3E}.Release|x64.Build.0 = Release|Any CPU
+		{1ED49D21-41D2-4902-B34F-02626607FE3E}.Release|x86.ActiveCfg = Release|Any CPU
+		{1ED49D21-41D2-4902-B34F-02626607FE3E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

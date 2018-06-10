@@ -8,6 +8,15 @@
   <ItemGroup>
     <PackageReference Include="ElectronNET.API" Version="0.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.8" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="RestSharp" Version="106.1.0" />
+    <PackageReference Include="SimpleInjector" Version="4.1.1" />
+    <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc" Version="4.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\hyperion.pf.workflow\Hyperion.Pf.Workflow\Hyperion.Pf.Workflow.csproj" />
+    <ProjectReference Include="..\pixstock.common.core\Pixstock.Common.Core.csproj" />
+    <ProjectReference Include="..\pixstock.common.model\Pixstock.Common.Model.csproj" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="ElectronNET.CLI" Version="0.0.9" />
