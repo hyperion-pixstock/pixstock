@@ -343,6 +343,14 @@
         "tslib": "1.9.2"
       }
     },
+    "@angular/cdk": {
+      "version": "6.2.1",
+      "resolved": "https://registry.npmjs.org/@angular/cdk/-/cdk-6.2.1.tgz",
+      "integrity": "sha512-uwW4eIGJKqOkR+ew6YcEAh1J4SP98jdyDpsZ4IEMkV9+jXcKfcwcxGFpZvs9wJsAvAr8EgNmZ8h+iuZLwJsvmA==",
+      "requires": {
+        "tslib": "1.9.2"
+      }
+    },
     "@angular/common": {
       "version": "6.0.4",
       "resolved": "https://registry.npmjs.org/@angular/common/-/common-6.0.4.tgz",
@@ -432,6 +440,14 @@
       "resolved": "https://registry.npmjs.org/@angular/http/-/http-6.0.4.tgz",
       "integrity": "sha512-bq7cS0/5hM3Af3FolEe7HpKP19/7MJWIPGi5k9rYCGM4dXKFiKa+LA/SbXE0DMiKxhAQbZDwQ9HN04r70DRyBQ==",
       "dev": true,
+      "requires": {
+        "tslib": "1.9.2"
+      }
+    },
+    "@angular/material": {
+      "version": "6.2.1",
+      "resolved": "https://registry.npmjs.org/@angular/material/-/material-6.2.1.tgz",
+      "integrity": "sha512-SBoUXxHknkgwzp5pNDHW0jyrTM0d0Tk4lVyDbtEX8VEPtXqG5nL3BSgyjpJbTvqlmy2kOooUu3qgAmt87VH9lw==",
       "requires": {
         "tslib": "1.9.2"
       }
@@ -4358,6 +4374,11 @@
       "integrity": "sha1-TK+tdrxi8C+gObL5Tpo906ORpyU=",
       "dev": true,
       "optional": true
+    },
+    "hammerjs": {
+      "version": "2.0.8",
+      "resolved": "https://registry.npmjs.org/hammerjs/-/hammerjs-2.0.8.tgz",
+      "integrity": "sha1-BO93hiz/K7edMPdpIJWTAiK/YPE="
     },
     "har-schema": {
       "version": "2.0.0",
@@ -8557,8 +8578,7 @@
     "tslib": {
       "version": "1.9.2",
       "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.9.2.tgz",
-      "integrity": "sha512-AVP5Xol3WivEr7hnssHDsaM+lVrVXWUvd1cfXTRkTj80b//6g2wIFEH6hZG0muGZRnHGrfttpdzRk3YlBkWjKw==",
-      "dev": true
+      "integrity": "sha512-AVP5Xol3WivEr7hnssHDsaM+lVrVXWUvd1cfXTRkTj80b//6g2wIFEH6hZG0muGZRnHGrfttpdzRk3YlBkWjKw=="
     },
     "tsscmp": {
       "version": "1.0.5",
