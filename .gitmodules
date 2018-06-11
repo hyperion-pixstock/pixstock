@@ -1,6 +1,6 @@
-[submodule "hyperion.pf.entity"]
-	path = hyperion.pf.entity
-	url = https://github.com/hyperion-pixstock/hyperion.pf.entity.git
 [submodule "hyperion.pf.workflow"]
 	path = hyperion.pf.workflow
 	url = https://github.com/hyperion-pixstock/hyperion.pf.workflow.git
+[submodule "hyperion.pf.entity"]
+	path = hyperion.pf.entity
+	url = https://github.com/hyperion-pixstock/hyperion.pf.entity.git
