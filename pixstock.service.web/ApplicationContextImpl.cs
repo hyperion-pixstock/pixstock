@@ -22,7 +22,7 @@ namespace Pixstock.Service.App
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         public IBuildAssemblyParameter _AssemblyParameter;
-
+        
         private string _ApplicationDirectoryPath;
 
         //private bool _alreadyDisposed = false;
@@ -134,7 +134,7 @@ namespace Pixstock.Service.App
                 string sqltext = "";
                 System.Reflection.Assembly assm = System.Reflection.Assembly.GetExecutingAssembly();
 
-                using (var stream = assm.GetManifestResourceStream(string.Format("Pixstock.Service.App.Assets.Sql.{0}.Initialize_sql.txt", "App")))
+                using (var stream = assm.GetManifestResourceStream(string.Format("pixstock.service.web.Assets.Sql.{0}.Initialize_sql.txt", "App")))
                 {
                     using (StreamReader reader = new StreamReader(stream))
                     {
@@ -232,7 +232,7 @@ namespace Pixstock.Service.App
                 string sqltext = "";
                 System.Reflection.Assembly assm = System.Reflection.Assembly.GetExecutingAssembly();
 
-                using (var stream = assm.GetManifestResourceStream(string.Format("Pixstock.Service.App.Assets.Sql.{0}.Initialize_sql.txt", "Thumbnail")))
+                using (var stream = assm.GetManifestResourceStream(string.Format("pixstock.service.web.Assets.Sql.{0}.Initialize_sql.txt", "Thumbnail")))
                 {
                     using (StreamReader reader = new StreamReader(stream))
                     {
