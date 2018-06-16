@@ -57,6 +57,18 @@
     <EmbeddedResource Include="Assets\Sql\**\*.txt" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="ClientApp\app\components\screen\category-list\category-list.screen.ts" />
+    <None Remove="ClientApp\app\components\screen\preview\preview.screen.ts" />
+    <None Remove="ClientApp\app\service\contract\response.contract.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\app\components\screen\category-list\category-list.screen.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\screen\preview\preview.screen.ts" />
+    <TypeScriptCompile Include="ClientApp\app\service\contract\response.contract.ts" />
+  </ItemGroup>
+
   <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">

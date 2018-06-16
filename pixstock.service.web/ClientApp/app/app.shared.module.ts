@@ -9,8 +9,12 @@ import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { HomeComponent } from './components/home/home.component';
 import { FetchDataComponent } from './components/fetchdata/fetchdata.component';
 import { CounterComponent } from './components/counter/counter.component';
+import { DashboardScreen } from './components/screen/dashboard/dashboard.screen';
+import { CategoryListScreen } from './components/screen/category-list/category-list.screen';
+import { PreviewScreen } from './components/screen/preview/preview.screen';
 
 import 'hammerjs';
+import { MatButtonModule, MatCheckboxModule } from '@angular/material';
 
 @NgModule({
     declarations: [
@@ -18,17 +22,22 @@ import 'hammerjs';
         NavMenuComponent,
         CounterComponent,
         FetchDataComponent,
-        HomeComponent
+        HomeComponent,
+        DashboardScreen,
+        CategoryListScreen,
+        PreviewScreen
     ],
     imports: [
+        MatButtonModule, MatCheckboxModule,
         CommonModule,
         HttpModule,
         FormsModule,
         RouterModule.forRoot([
-            { path: '', redirectTo: 'home', pathMatch: 'full' },
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
             { path: 'counter', component: CounterComponent },
             { path: 'fetch-data', component: FetchDataComponent },
+            { path: 'dashboard', component: DashboardScreen },
             { path: '**', redirectTo: 'home' }
         ])
     ]
