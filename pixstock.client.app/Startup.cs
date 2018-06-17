@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using pixstock.apl.app.core;
 using pixstock.apl.app.core.Infra;
+using pixstock.apl.app.core.Intent;
 using pixstock.apl.app.core.IpcApi;
 using SimpleInjector;
 using SimpleInjector.Integration.AspNetCore.Mvc;

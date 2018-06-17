@@ -60,12 +60,14 @@
   <ItemGroup>
     <None Remove="ClientApp\app\components\screen\category-list\category-list.screen.ts" />
     <None Remove="ClientApp\app\components\screen\preview\preview.screen.ts" />
+    <None Remove="ClientApp\app\service\contract\delivery.contract.ts" />
     <None Remove="ClientApp\app\service\contract\response.contract.ts" />
   </ItemGroup>
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\app\components\screen\category-list\category-list.screen.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\screen\preview\preview.screen.ts" />
+    <TypeScriptCompile Include="ClientApp\app\service\contract\delivery.contract.ts" />
     <TypeScriptCompile Include="ClientApp\app\service\contract\response.contract.ts" />
   </ItemGroup>
 

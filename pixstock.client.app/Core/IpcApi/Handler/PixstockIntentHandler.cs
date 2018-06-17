@@ -5,7 +5,7 @@ using pixstock.apl.app.core.Infra;
 namespace pixstock.apl.app.core.IpcApi.Handler
 {
     /// <summary>
-    /// PixstockのIntentメッセージとして処理するIPCハンドラ
+    /// IPCメッセージを、Intentメッセージとして登録するIPCハンドラ
     /// </summary>
     public class PixstockIntentHandler : IRequestHandler
     {

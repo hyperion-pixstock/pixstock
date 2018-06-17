@@ -11,7 +11,7 @@ namespace pixstock.apl.app.core.IpcApi
 {
     public class IpcBridge
     {
-        const string IPCEXTENTION_NAMESPACE = "pixstock.apl.app.core.IpcHandler";
+        const string IPCEXTENTION_NAMESPACE = "pixstock.apl.app.core.IpcApi.Message";
 
         //private static Logger _logger = LogManager.GetCurrentClassLogger();
 

@@ -3,7 +3,7 @@ import { Logger } from "angular2-logger/core";
 import { IpcResponse, IpcUpdateViewResponse, IpcUpdatePropResponse } from './contract/response.contract';
 
 /**
- * IPCでのメッセージ受信と、イベントの発行を行うメッセージングサービスです。
+ * BFFからのIPCメッセージ受信と、内部イベントの発行を行うメッセージングサービスです。
  */
 @Injectable()
 export class MessagingService {
@@ -36,7 +36,7 @@ export class MessagingService {
         let w: any = window;
         if (!w['angularComponentRef_PixstockNetService']) {
             w['angularComponentRef_PixstockNetService'] = {
-                // NOTE: IPCイベントをすべて登録する
+                // NOTE: VFFに送信するIPCイベントをすべて登録する
                 componentFn_MSG_SHOW_CONTENTPREVIEW: (event: any, arg: any) => this.onMSG_SHOW_CONTENTPREVIEW(event, arg),
                 componentFn_MSG_SHOW_CONTENLIST: (event: any, arg: any) => this.onMSG_SHOW_CONTENLIST(event, arg),
                 componentFn_IPC_UPDATEVIEW: (event: any, arg: any) => this.onIPC_UPDATEVIEW(event, arg),

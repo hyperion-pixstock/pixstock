@@ -1,8 +1,10 @@
-import { NgModule } from '@angular/core';
+import { NgModule, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
+import { Logger, Options as LoggerOptions, Level as LoggerLevel } from 'angular2-logger/core';
+import { MatButtonModule, MatCheckboxModule } from '@angular/material';
 
 import { AppComponent } from './components/app/app.component';
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
@@ -14,7 +16,11 @@ import { CategoryListScreen } from './components/screen/category-list/category-l
 import { PreviewScreen } from './components/screen/preview/preview.screen';
 
 import 'hammerjs';
-import { MatButtonModule, MatCheckboxModule } from '@angular/material';
+import { ViewModel } from './viewmodel';
+import { MessagingService } from './service/messaging.service';
+import { CourierService } from './service/courier.service';
+import { DeliveryService } from './service/delivery.service';
+import { NaviService } from './service/navi.service';
 
 @NgModule({
     declarations: [
@@ -40,7 +46,56 @@ import { MatButtonModule, MatCheckboxModule } from '@angular/material';
             { path: 'dashboard', component: DashboardScreen },
             { path: '**', redirectTo: 'home' }
         ])
+    ],
+    providers: [
+        { provide: LoggerOptions, useValue: { level: LoggerLevel.DEBUG } },
+        Logger,
+        ViewModel,
+        MessagingService,
+        CourierService,
+        DeliveryService,
+        NaviService
     ]
 })
 export class AppModuleShared {
+    constructor(
+        private logger: Logger,
+        private ngZone: NgZone,
+        private messaging: MessagingService,
+        private courier: CourierService,
+        private delivery: DeliveryService,
+        private navi: NaviService
+    ) {
+        logger.info("アプリケーションの初期化 v0.0.1#6");
+        console.info("アプリケーションの初期化 v0.0.1#6");
+
+        let w: any = window;
+        w['angularComponentRef'] = {
+            component: this,
+            zone: ngZone
+        };
+
+        var parent: any = window.parent; // JSのWindowオブジェクト
+        console.info("parent", parent);
+
+        if (parent.getFirstLoad == null) {
+            logger.error("getFirstLoadの定義を見つけることができません");
+        } else {
+            let flag = parent.getFirstLoad();
+            if (flag == false) {
+                logger.info("[App] App初期読み込み判定");
+                parent.setFirstLoad();
+                messaging.initialize(parent.getIpc(), true, logger); // IPCオブジェクト取得
+                courier.initialize();
+                delivery.initialize();
+                navi.initialize();
+            } else {
+                logger.info("[App] App初期化済み判定");
+                messaging.initialize(parent.getIpc(), false, logger); // IPCオブジェクト取得
+                courier.initialize();
+                delivery.initialize();
+                navi.initialize();
+            }
+        }
+    }
 }
