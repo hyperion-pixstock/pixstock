@@ -62,6 +62,8 @@ namespace pixstock.apl.app.core.IpcApi
                 requestHandlerFactory.Add(ext.IpcMessageName, ext.RequestHandler);
                 Electron.IpcMain.On(ext.IpcMessageName, (param) =>
                 {
+                    Console.WriteLine(string.Format("[IPC][Receive] {0}", ext.IpcMessageName));
+
                     var factory = mContainer.GetInstance<IRequestHandlerFactory>();
                     var handler = factory.CreateNew(ext.IpcMessageName);
 

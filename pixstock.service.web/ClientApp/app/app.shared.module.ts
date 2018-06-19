@@ -39,11 +39,13 @@ import { NaviService } from './service/navi.service';
         HttpModule,
         FormsModule,
         RouterModule.forRoot([
-            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+            { path: '', redirectTo: 'Dashboard', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
             { path: 'counter', component: CounterComponent },
             { path: 'fetch-data', component: FetchDataComponent },
-            { path: 'dashboard', component: DashboardScreen },
+            { path: 'Dashboard', component: DashboardScreen },
+            { path: 'CategoryList', component: CategoryListScreen },
+            { path: 'Preview', component: PreviewScreen },
             { path: '**', redirectTo: 'home' }
         ])
     ],

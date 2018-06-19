@@ -33,6 +33,8 @@ export class CourierService {
         this.initializedFlag = true;
 
         this.messagingSrv.UpdateProp.subscribe((prop: IpcUpdatePropResponse) => {
+            this.logger.info("[Pixstock][Courier][UpdateProp.subscribe] レジスタ更新 レジスタ名=" + prop.PropertyName, prop.Value);
+
             if (prop.PropertyName == "CategoryList") {
                 let objValue = JSON.parse(prop.Value) as CategoryListUpdateProp;
                 if (objValue != null) {

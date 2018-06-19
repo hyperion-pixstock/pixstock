@@ -1,4 +1,6 @@
-﻿<h1>Dashboard</h1>
+<h1>Dashboard</h1>
+
+<p>ダッシュボード</p>
 
 <div class="button-row">
     <button mat-button>Basic</button>
@@ -11,7 +13,8 @@
 
 <h3>Raised Buttons</h3>
 <div class="button-row">
-    <button mat-raised-button>Basic</button>
+    <button mat-raised-button (click)="onClick_TransTopScreen($event)">onClick_TransTopScreen</button>
+    <button mat-raised-button (click)="onClick_CategoryListTransitionSample($event)">onClick_CategoryListTransitionSample</button>
     <button mat-raised-button color="primary">Primary</button>
     <button mat-raised-button color="accent">Accent</button>
     <button mat-raised-button color="warn">Warn</button>

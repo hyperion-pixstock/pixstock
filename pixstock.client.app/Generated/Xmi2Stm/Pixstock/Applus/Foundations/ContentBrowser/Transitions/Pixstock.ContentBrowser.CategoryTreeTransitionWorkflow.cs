@@ -16,74 +16,74 @@ public partial class CategoryTreeTransitionWorkflow : FrameStateMachine<States, 
 public void Setup() {
 DefineHierarchyOn(States.ROOT)
 .WithHistoryType(HistoryType.None)
-.WithInitialSubState(States.HomePage)
+.WithInitialSubState(States.Dashboard)
 ;
-DefineHierarchyOn(States.HomePage)
+DefineHierarchyOn(States.Dashboard)
 .WithHistoryType(HistoryType.None)
-.WithInitialSubState(States.HomePageBase)
-.WithSubState(States.ThumbnailListPage)
+.WithInitialSubState(States.DashboardBase)
+.WithSubState(States.CategoryList)
 ;
-DefineHierarchyOn(States.ThumbnailListPage)
+DefineHierarchyOn(States.CategoryList)
 .WithHistoryType(HistoryType.None)
-.WithInitialSubState(States.ThumbnailListPageBase)
-.WithSubState(States.PreviewPage)
+.WithInitialSubState(States.CategoryListBase)
+.WithSubState(States.Preview)
 ;
 In(States.INIT)
 .On(Events.TRNS_TOPSCREEN)
-.Goto(States.HomePage);
+.Goto(States.Dashboard);
 In(States.ROOT)
 .On(Events.TRNS_EXIT)
 .Goto(States.INIT);
 In(States.ROOT)
 .On(Events.TRNS_DEBUG_BACK)
 .Goto(States.ROOT);
-In(States.HomePageBase)
+In(States.DashboardBase)
 .On(Events.TRNS_ThumbnailListPage)
-.Goto(States.ThumbnailListPage);
-In(States.ThumbnailListPageBase)
+.Goto(States.CategoryList);
+In(States.CategoryListBase)
 .On(Events.TRNS_PreviewPage)
-.Goto(States.PreviewPage);
-In(States.ThumbnailListPageBase)
+.Goto(States.Preview);
+In(States.CategoryListBase)
 .On(Events.TRNS_BACK)
-.Goto(States.HomePage);
-In(States.PreviewPage)
+.Goto(States.Dashboard);
+In(States.Preview)
 .On(Events.TRNS_BACK)
-.Goto(States.ThumbnailListPageBase);
+.Goto(States.CategoryListBase);
 In(States.ROOT)
 .On(Events.RESPONSE_GETCATEGORY)
 .Execute<object>(RESPONSE_GETCATEGORY);
 In(States.ROOT)
 .On(Events.RESPONSE_GETCATEGORYCONTENT)
 .Execute<object>(RESPONSE_GETCATEGORYCONTENT);
-In(States.HomePage)
-.ExecuteOnEntry(__FTC_Event_HomePage_Entry);
-In(States.HomePage)
-.ExecuteOnExit(__FTC_Event_HomePage_Exit);
-In(States.HomePageBase)
+In(States.Dashboard)
+.ExecuteOnEntry(__FTC_Event_Dashboard_Entry);
+In(States.Dashboard)
+.ExecuteOnExit(__FTC_Event_Dashboard_Exit);
+In(States.DashboardBase)
 .ExecuteOnEntry(HomePageBase_Entry);
-In(States.HomePageBase)
+In(States.DashboardBase)
 .ExecuteOnExit(HomePageBase_Exit);
-In(States.ThumbnailListPage)
+In(States.CategoryList)
 .ExecuteOnEntry(ThumbnailListPage_Entry);
-In(States.ThumbnailListPage)
+In(States.CategoryList)
 .ExecuteOnExit(ThumbnailListPage_Exit);
-In(States.ThumbnailListPageBase)
+In(States.CategoryListBase)
 .On(Events.CategorySelectBtnClick)
 .Execute<object>(CategorySelectBtnClick);
-In(States.ThumbnailListPageBase)
+In(States.CategoryListBase)
 .On(Events.ACT_ContinueCategoryList)
 .Execute<object>(ACT_ContinueCategoryList);
-In(States.ThumbnailListPageBase)
+In(States.CategoryListBase)
 .On(Events.ACT_UpperCategoryList)
 .Execute<object>(ACT_UpperCategoryList);
-In(States.PreviewPage)
-.ExecuteOnEntry(__FTC_Event_PreviewPage_Entry);
-In(States.PreviewPage)
-.ExecuteOnExit(__FTC_Event_PreviewPage_Exit);
-In(States.PreviewPage)
+In(States.Preview)
+.ExecuteOnEntry(__FTC_Event_Preview_Entry);
+In(States.Preview)
+.ExecuteOnExit(__FTC_Event_Preview_Exit);
+In(States.Preview)
 .On(Events.ACT_DISPLAY_PREVIEWCURRENTLIST)
 .Execute<object>(ACT_DISPLAY_PREVIEWCURRENTLIST);
-In(States.PreviewPage)
+In(States.Preview)
 .On(Events.RESPONSE_GETCONTENT)
 .Execute<object>(RESPONSE_GETCONTENT);
 	Initialize(States.INIT);
@@ -98,13 +98,13 @@ public virtual async Task RESPONSE_GETCATEGORYCONTENT(object param) {
 	await OnRESPONSE_GETCATEGORYCONTENT(param);
 	Events.RESPONSE_GETCATEGORYCONTENT.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
 }
-public virtual async Task __FTC_Event_HomePage_Entry() {
+public virtual async Task __FTC_Event_Dashboard_Entry() {
 ICollection<int> ribbonMenuEventId = new List<int>{  };
-	ShowFrame("HomePage",ribbonMenuEventId);
+	ShowFrame("Dashboard",ribbonMenuEventId);
 }
-public virtual async Task __FTC_Event_HomePage_Exit() {
+public virtual async Task __FTC_Event_Dashboard_Exit() {
 ICollection<int> ribbonMenuEventId = new List<int>{  };
-	HideFrame("HomePage", ribbonMenuEventId);
+	HideFrame("Dashboard", ribbonMenuEventId);
 }
 public virtual async Task HomePageBase_Entry() {
 	await OnHomePageBase_Entry();
@@ -115,12 +115,12 @@ public virtual async Task HomePageBase_Exit() {
 public virtual async Task ThumbnailListPage_Entry() {
 	await OnThumbnailListPage_Entry();
 ICollection<int> ribbonMenuEventId = new List<int>{  };
-	ShowFrame("ThumbnailListPage",ribbonMenuEventId);
+	ShowFrame("CategoryList",ribbonMenuEventId);
 }
 public virtual async Task ThumbnailListPage_Exit() {
 	await OnThumbnailListPage_Exit();
 ICollection<int> ribbonMenuEventId = new List<int>{  };
-	HideFrame("ThumbnailListPage", ribbonMenuEventId);
+	HideFrame("CategoryList", ribbonMenuEventId);
 }
 public virtual async Task CategorySelectBtnClick(object param) {
 	Events.CategorySelectBtnClick.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
@@ -137,13 +137,13 @@ public virtual async Task ACT_UpperCategoryList(object param) {
 	await OnACT_UpperCategoryList(param);
 	Events.ACT_UpperCategoryList.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
 }
-public virtual async Task __FTC_Event_PreviewPage_Entry() {
+public virtual async Task __FTC_Event_Preview_Entry() {
 ICollection<int> ribbonMenuEventId = new List<int>{  };
-	ShowFrame("PreviewPage",ribbonMenuEventId);
+	ShowFrame("Preview",ribbonMenuEventId);
 }
-public virtual async Task __FTC_Event_PreviewPage_Exit() {
+public virtual async Task __FTC_Event_Preview_Exit() {
 ICollection<int> ribbonMenuEventId = new List<int>{  };
-	HideFrame("PreviewPage", ribbonMenuEventId);
+	HideFrame("Preview", ribbonMenuEventId);
 }
 public virtual async Task ACT_DISPLAY_PREVIEWCURRENTLIST(object param) {
 	Events.ACT_DISPLAY_PREVIEWCURRENTLIST.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));

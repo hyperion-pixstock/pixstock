@@ -82,34 +82,34 @@ export class MessagingService {
     }
 
     private onMSG_SHOW_CONTENTPREVIEW(event: any, args: any) {
-        this.logger.debug("[PixstockNetService][onMSG_SHOW_CONTENTPREVIEW] : Execute");
+        this.logger.debug("[Pixstock][Messaging][onMSG_SHOW_CONTENTPREVIEW] : Execute");
         //this.ShowContentPreview.emit(args);
     }
 
     private onMSG_SHOW_CONTENLIST(event: any, args: any) {
-        this.logger.debug("[PixstockNetService][onMSG_SHOW_CONTENLIST] : Execute");
+        this.logger.debug("[Pixstock][Messaging][onMSG_SHOW_CONTENLIST] : Execute");
         //this.ShowContentList.emit(args);
     }
 
     private onIPC_UPDATEVIEW(event: any, args: IpcResponse) {
-        this.logger.debug("[PixstockNetService][onIPC_UPDATEVIEW] : Execute", args);
+        this.logger.debug("[Pixstock][Messaging][onIPC_UPDATEVIEW] : Execute", args);
 
         // "IPC_UPDATEVIEW"メッセージの、本文をインスタンス化する。
         var responseObj = JSON.parse(args.body) as IpcUpdateViewResponse;
 
         // DUMP --------
-        this.logger.debug(responseObj);
-        responseObj.UpdateList.forEach(element => {
-            this.logger.debug("[UpdateList] ", element);
-        });
-        this.logger.debug("[Parameter] ", responseObj.Parameter);
+        //this.logger.debug(responseObj);
+        //responseObj.UpdateList.forEach(element => {
+        //    this.logger.debug("[UpdateList] ", element);
+        //});
+        //this.logger.debug("[Parameter] ", responseObj.Parameter);
         // -------------
 
         this.UpdateView.emit(responseObj);
     }
 
     private onIPC_UPDATEPROP(event: any, args: IpcResponse) {
-        this.logger.debug("[PixstockNetService][onIPC_UPDATEPROP] : Execute", args);
+        this.logger.debug("[Pixstock][Messaging][onIPC_UPDATEPROP] : Execute", args);
 
         // "IPC_UPDATEPROP"メッセージの、本文をインスタンス化する。
         var responseObj = JSON.parse(args.body) as IpcUpdatePropResponse;

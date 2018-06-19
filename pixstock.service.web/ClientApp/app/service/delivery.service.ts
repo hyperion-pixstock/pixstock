@@ -28,18 +28,51 @@ export class DeliveryService {
     }
 
     /**
+     * 遷移図の初期化用メッセージ呼び出し.
+     *
+     * クライアントが利用可能であることを、BFFに通知するためのイベントです
+     */
+    public transTopScreen() {
+        this.logger.info("[Pixstock][Delivery][transTopScreen] 遷移メッセージ送信");
+        var intentMessage = new IntentMessage();
+        intentMessage.ServiceType = "Workflow";
+        intentMessage.MessageName = "TRNS_TOPSCREEN";
+        intentMessage.Parameter = "";
+
+        this.send(intentMessage);
+    }
+
+    /**
+     * カテゴリ一覧画面を表示する遷移イベントを発行します
+     */
+    public showScreenCategorytList() {
+        this.logger.info("[Pixstock][Delivery][showScreenCategorytList] カテゴリ一覧画面への遷移メッセージ送信");
+        var intentMessage = new IntentMessage();
+        intentMessage.ServiceType = "Workflow";
+        intentMessage.MessageName = "TRNS_ThumbnailListPage";
+        intentMessage.Parameter = "";
+
+        this.send(intentMessage);
+    }
+
+    /**
      * プレビュー画面を表示する遷移イベントを発行します
      *
      * @param index 表示したいアイテムのナビゲーションリスト内での位置
      */
     public showScreenPreview(index: number) {
+        this.logger.info("[Pixstock][Delivery][showScreenPreview] プレビュー画面への遷移メッセージ送信", index);
         var intentMessage = new IntentMessage();
         intentMessage.ServiceType = "Workflow";
         intentMessage.MessageName = "TRNS_PreviewPage";
         intentMessage.Parameter = index.toString();
 
+        this.send(intentMessage);
+    }
+
+    private send(message: IntentMessage) {
         var ipcMessage = new IpcMessage();
-        ipcMessage.Body = JSON.stringify(intentMessage);
+        ipcMessage.Body = JSON.stringify(message);
         this.messaging.ipcRenderer.send("PIXS_INTENT_MESSAGE", ipcMessage);
     }
 }
