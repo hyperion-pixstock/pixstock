@@ -13,6 +13,8 @@ namespace pixstock.apl.app.core.Intent.Service
     /// </summary>
     public class WorkflowService : IMessagingServiceExtention
     {
+        public const string COMMONMESSAGE_BACKTRANSITION = "ACT_BACKSCREEN";
+
         private ILogger mLogger;
 
         public ServiceType ServiceType => ServiceType.Workflow;
@@ -36,19 +38,26 @@ namespace pixstock.apl.app.core.Intent.Service
         {
             var screenManager = Container.GetInstance<IScreenManager>();
 
-             this.mLogger.LogDebug(LoggingEvents.Undefine, "[WorkflowService][Execute]");
-             this.mLogger.LogDebug(LoggingEvents.Undefine, " intentMessage = " + intentMessage);
-             this.mLogger.LogDebug(LoggingEvents.Undefine, " parameter = " + parameter);
+            this.mLogger.LogDebug(LoggingEvents.Undefine, "[WorkflowService][Execute]");
+            this.mLogger.LogDebug(LoggingEvents.Undefine, " intentMessage = " + intentMessage);
+            this.mLogger.LogDebug(LoggingEvents.Undefine, " parameter = " + parameter);
 
             if (mPixstockPerspective.Status == PerspectiveStatus.Active)
             {
-                foreach (var content in mPixstockPerspective.Contents)
+                if (intentMessage == COMMONMESSAGE_BACKTRANSITION)
                 {
-                    if (content is IPixstockContent)
+                    screenManager.BackScreen();
+                }
+                else
+                {
+                    foreach (var content in mPixstockPerspective.Contents)
                     {
-                        ((IPixstockContent)content).FireWorkflowEvent(Container, intentMessage, parameter);
+                        if (content is IPixstockContent)
+                        {
+                            ((IPixstockContent)content).FireWorkflowEvent(Container, intentMessage, parameter);
 
-                        screenManager.UpdateScreenTransitionView(parameter);
+                            screenManager.UpdateScreenTransitionView(parameter);
+                        }
                     }
                 }
             }

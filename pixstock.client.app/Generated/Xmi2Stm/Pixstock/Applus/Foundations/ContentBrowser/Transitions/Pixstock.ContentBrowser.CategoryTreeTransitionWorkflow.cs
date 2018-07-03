@@ -50,11 +50,17 @@ In(States.Preview)
 .On(Events.TRNS_BACK)
 .Goto(States.CategoryListBase);
 In(States.ROOT)
-.On(Events.RESPONSE_GETCATEGORY)
-.Execute<object>(RESPONSE_GETCATEGORY);
+.On(Events.ACT_DEBUGCOMMAND)
+.Execute<object>(ACT_DEBUGCOMMAND);
 In(States.ROOT)
-.On(Events.RESPONSE_GETCATEGORYCONTENT)
-.Execute<object>(RESPONSE_GETCATEGORYCONTENT);
+.On(Events.ACT_CATEGORYTREE_UPDATE)
+.Execute<object>(ACT_CATEGORYTREE_UPDATE);
+In(States.ROOT)
+.On(Events.ACT_THUMBNAILLIST_UPDATE)
+.Execute<object>(ACT_THUMBNAILLIST_UPDATE);
+In(States.ROOT)
+.On(Events.ACT_PREVIEW_UPDATE)
+.Execute<object>(ACT_PREVIEW_UPDATE);
 In(States.Dashboard)
 .ExecuteOnEntry(__FTC_Event_Dashboard_Entry);
 In(States.Dashboard)
@@ -88,15 +94,25 @@ In(States.Preview)
 .Execute<object>(RESPONSE_GETCONTENT);
 	Initialize(States.INIT);
 }
-public virtual async Task RESPONSE_GETCATEGORY(object param) {
-	Events.RESPONSE_GETCATEGORY.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
-	await OnRESPONSE_GETCATEGORY(param);
-	Events.RESPONSE_GETCATEGORY.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
+public virtual async Task ACT_DEBUGCOMMAND(object param) {
+	Events.ACT_DEBUGCOMMAND.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
+	await OnACT_DEBUGCOMMAND(param);
+	Events.ACT_DEBUGCOMMAND.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
 }
-public virtual async Task RESPONSE_GETCATEGORYCONTENT(object param) {
-	Events.RESPONSE_GETCATEGORYCONTENT.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
-	await OnRESPONSE_GETCATEGORYCONTENT(param);
-	Events.RESPONSE_GETCATEGORYCONTENT.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
+public virtual async Task ACT_CATEGORYTREE_UPDATE(object param) {
+	Events.ACT_CATEGORYTREE_UPDATE.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
+	await OnACT_CATEGORYTREE_UPDATE(param);
+	Events.ACT_CATEGORYTREE_UPDATE.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
+}
+public virtual async Task ACT_THUMBNAILLIST_UPDATE(object param) {
+	Events.ACT_THUMBNAILLIST_UPDATE.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
+	await OnACT_THUMBNAILLIST_UPDATE(param);
+	Events.ACT_THUMBNAILLIST_UPDATE.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
+}
+public virtual async Task ACT_PREVIEW_UPDATE(object param) {
+	Events.ACT_PREVIEW_UPDATE.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
+	await OnACT_PREVIEW_UPDATE(param);
+	Events.ACT_PREVIEW_UPDATE.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
 }
 public virtual async Task __FTC_Event_Dashboard_Entry() {
 ICollection<int> ribbonMenuEventId = new List<int>{  };

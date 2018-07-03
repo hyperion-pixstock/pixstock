@@ -51,8 +51,15 @@ namespace pixstock.apl.app.core.Intent
 
         public void ExecuteService(ServiceType service, string intentName, object parameter)
         {
-            var serviceObj = mServiceInstanceDict[service];
-            serviceObj.Execute(intentName, parameter);
+            try
+            {
+                var serviceObj = mServiceInstanceDict[service];
+                serviceObj.Execute(intentName, parameter);
+            }
+            catch (Exception expr)
+            {
+                mLogger.LogError(LoggingEvents.Undefine, expr, "サービスの実行に失敗しました");
+            }
         }
 
         public void Verify()
