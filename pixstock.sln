@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "pixstock.service.web", "pixstock.service.web\pixstock.service.web.csproj", "{67F44B2C-639D-4E38-B29C-87667790ACE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pixstock.Service.Web", "pixstock.service.web\Pixstock.Service.Web.csproj", "{67F44B2C-639D-4E38-B29C-87667790ACE2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "pixstock.client.app", "pixstock.client.app\pixstock.client.app.csproj", "{A6BEB420-8231-4C05-BE7D-F1578A38A45B}"
 EndProject

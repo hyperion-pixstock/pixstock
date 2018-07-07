@@ -5,6 +5,10 @@ import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
 
 import { AppComponent } from './app.component';
 import { DisplayMapComponent } from './components/displayMap/displayMap.component';
+import {
+  MatButtonModule, MatCheckboxModule, MatTreeModule, MatIconModule,
+  MatProgressBarModule, MatProgressSpinnerModule
+} from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -13,6 +17,9 @@ import { DisplayMapComponent } from './components/displayMap/displayMap.componen
   ],
   imports: [
     BrowserModule,
+    MatButtonModule, MatCheckboxModule,
+    MatTreeModule, MatIconModule,
+    MatProgressBarModule, MatProgressSpinnerModule,
     MDBBootstrapModule.forRoot(),
     NgxMapboxGLModule.forRoot({
       accessToken: 'YOUR ACCESS TOKEN GOES HERE', // Can also be set per map (accessToken input of mgl-map)

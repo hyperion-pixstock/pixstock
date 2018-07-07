@@ -14,12 +14,39 @@
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Kitting\**\*.txt" />
+    <EmbeddedResource Include="Assets\Sql\**\*.txt" />
+  </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="LiteDB" Version="4.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
+    <PackageReference Include="SimpleInjector" Version="4.3.0" />
+    <PackageReference Include="SimpleInjector.Integration.AspNetCore.Mvc" Version="4.3.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="2.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\pixstock.common.core\Pixstock.Common.Core.csproj" />
+    <ProjectReference Include="..\pixstock.common.model\Pixstock.Common.Model.csproj" />
+    <ProjectReference Include="..\hyperion.pf.entity\Hyperion.Pf.Entity.csproj" />
+    <ProjectReference Include="..\pixstock.service.core\Pixstock.Service.Core.csproj" />
+    <ProjectReference Include="..\pixstock.service.infra\Pixstock.Service.Infra.csproj" />
+    <ProjectReference Include="..\pixstock.service.model\Pixstock.Service.Model.csproj" />
+    <ProjectReference Include="..\pixstock.service.gateway\Pixstock.Service.Gateway.csproj" />
+    <ProjectReference Include="..\pixstock.service.extention.sdk\Pixstock.Service.Extention.Sdk.csproj" />
+
+    <!-- デバッグ時は、拡張機能プロジェクトを直接読み込む -->
+    <!--
+    <ProjectReference Include="..\Pixstock.Service.Extention.Fullbuild\Pixstock.Service.Extention.FullBuild.csproj" />
+    <ProjectReference Include="..\Pixstock.Service.Extention.Webscribe\Pixstock.Service.Extention.Webscribe.csproj" />
+    -->
+  </ItemGroup>
 </Project>
