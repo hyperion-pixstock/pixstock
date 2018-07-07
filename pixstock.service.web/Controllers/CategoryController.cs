@@ -16,22 +16,35 @@ using Pixstock.Service.Web.Model;
 
 namespace Pixstock.Service.Web.Controllers
 {
+  /// <summary>
+  /// カテゴリ操作コントローラ
+  /// </summary>
+  [Produces("application/json")]
   [Route("aapi/[controller]")]
+  [ApiController]
   public class CategoryController : Controller
   {
-    private readonly ILogger _logger;
+    private readonly ILogger mLogger;
 
-    readonly ApiResponseBuilder mBuilder;
+    private readonly ApiResponseBuilder mBuilder;
 
-    readonly ICategoryRepository mCategoryRepository;
+    private readonly ICategoryRepository mCategoryRepository;
 
-    readonly IContentRepository mContentRepository;
+    private readonly IContentRepository mContentRepository;
 
-    readonly ExtentionManager mExtentionManager;
+    private readonly ExtentionManager mExtentionManager;
 
-    public CategoryController(ILoggerFactory loggerFactory,ApiResponseBuilder builder, ExtentionManager extentionManager, ICategoryRepository categoryRepository, IContentRepository contentRepository)
+    /// <summary>
+    /// コンストラクタ
+    /// </summary>
+    /// <param name="loggerFactory">ログ生成器</param>
+    /// <param name="builder"></param>
+    /// <param name="extentionManager"></param>
+    /// <param name="categoryRepository"></param>
+    /// <param name="contentRepository"></param>
+    public CategoryController(ILoggerFactory loggerFactory, ApiResponseBuilder builder, ExtentionManager extentionManager, ICategoryRepository categoryRepository, IContentRepository contentRepository)
     {
-      this._logger = loggerFactory.CreateLogger<CategoryController>();
+      this.mLogger = loggerFactory.CreateLogger<CategoryController>();
       this.mBuilder = builder;
       this.mCategoryRepository = categoryRepository;
       this.mExtentionManager = extentionManager;
@@ -39,84 +52,95 @@ namespace Pixstock.Service.Web.Controllers
     }
 
     /// <summary>
-    /// カテゴリ情報取得
+    /// 任意のカテゴリを取得します
     /// </summary>
     /// <param name="id"></param>
     /// <param name="param"></param>
-    /// <remarks>
-    /// GET api/category/5
-    /// </remarks>
-    /// <returns></returns>
     [HttpGet("{id}")]
-    public ResponseAapi<ICategory> GetCategory(int id, [FromQuery] CategoryParam param)
+    [ProducesResponseType(200)]
+    public ActionResult<ResponseAapi<ICategory>> GetCategory(int id, [FromQuery] CategoryParam param)
     {
       var response = new ResponseAapi<ICategory>();
-      try
+
+      mBuilder.AttachCategoryEntity(id, response);
+      var category = response.Value;
+
+      // "la"
+      if (param.lla_order == CategoryParam.LLA_ORDER_NAME_ASC)
       {
-        mBuilder.AttachCategoryEntity(id, response);
-        var category = response.Value;
-
-        // "la"
-        if (param.lla_order == CategoryParam.LLA_ORDER_NAME_ASC)
-        {
-          response.Link.Add("la", category.GetContentList().OrderBy(prop => prop.Name).Select(prop => prop.Id).ToArray());
-        }
-        else if (param.lla_order == CategoryParam.LLA_ORDER_NAME_DESC)
-        {
-          response.Link.Add("la", category.GetContentList().OrderByDescending(prop => prop.Name).Select(prop => prop.Id).ToArray());
-        }
-        else
-        {
-          response.Link.Add("la", category.GetContentList().Select(prop => prop.Id).ToArray());
-        }
-
-        // "cc"
-        var ccQuery = this.mCategoryRepository.FindChildren(category);
-        response.Link.Add("cc", ccQuery.Select(prop => prop.Id).ToArray());
-
-        // 拡張機能の呼び出し
-        this.mExtentionManager.Execute(ExtentionCutpointType.API_GET_CATEGORY, category);
+        response.Link.Add("la", category.GetContentList().OrderBy(prop => prop.Name).Select(prop => prop.Id).ToArray());
       }
-      catch (Exception expr)
+      else if (param.lla_order == CategoryParam.LLA_ORDER_NAME_DESC)
       {
-        _logger.LogError(expr.Message);
-        throw new InterfaceOperationException();
+        response.Link.Add("la", category.GetContentList().OrderByDescending(prop => prop.Name).Select(prop => prop.Id).ToArray());
+      }
+      else
+      {
+        response.Link.Add("la", category.GetContentList().Select(prop => prop.Id).ToArray());
+      }
+
+      // "cc"
+      var ccQuery = this.mCategoryRepository.FindChildren(category);
+      response.Link.Add("cc", ccQuery.Select(prop => prop.Id).ToArray());
+
+      // 拡張機能の呼び出し
+      this.mExtentionManager.Execute(ExtentionCutpointType.API_GET_CATEGORY, category);
+
+      return response;
+    }
+
+    /// <summary>
+    /// カテゴリの親階層カテゴリを取得します
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// <response code="200">カテゴリと関連付けられた親階層カテゴリを取得しました</response>
+    /// <response code="400">指定した項目が取得できませんでした</response>
+    [HttpGet("{id}/pc")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public ActionResult<ResponseAapi<ICategory>> GetCategoryLink_pc(int id)
+    {
+      var response = new ResponseAapi<ICategory>
+      {
+        Value = GetCategoryLink(id, "pc").FirstOrDefault()
+      };
+
+      if (response.Value == null)
+      {
+        return NotFound();
       }
 
       return response;
     }
 
     /// <summary>
-    /// カテゴリ親階層カテゴリリンク情報取得API
+    /// カテゴリに含まれる子階層カテゴリ一覧を取得します
     /// </summary>
     /// <param name="id"></param>
-    /// <returns></returns>
-    [HttpGet("{id}/pc")]
-    public ResponseAapi<ICollection<ICategory>> GetCategoryLink_pc(int id)
-    {
-      return GetCategoryLink(id, "pc");
-    }
-
-    /// <summary>
-    /// カテゴリサブカテゴリリンク情報取得API
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <response code="200">カテゴリと関連付けられた子階層カテゴリ一覧を取得しました</response>
     [HttpGet("{id}/cc")]
-    public ResponseAapi<ICollection<ICategory>> GetCategoryLink_cc(int id)
+    [ProducesResponseType(200)]
+    public ActionResult<ResponseAapi<ICollection<ICategory>>> GetCategoryLink_cc(int id)
     {
-      return GetCategoryLink(id, "cc");
+      var response = new ResponseAapi<ICollection<ICategory>>
+      {
+        Value = GetCategoryLink(id, "cc")
+      };
+
+      return response;
     }
 
     /// <summary>
-    /// カテゴリコンテントリンク情報取得API
+    /// カテゴリに含まれるコンテント一覧を取得します
     /// </summary>
     /// <param name="id"></param>
-    /// <returns></returns>
+    /// <response code="200">カテゴリと関連付けられたコンテント一覧を取得しました</response>
     [HttpGet("{id}/la")]
-    public ResponseAapi<ICollection<IContent>> GetCategoryLink_la(int id)
+    [ProducesResponseType(200)]
+    public ActionResult<ResponseAapi<ICollection<IContent>>> GetCategoryLink_la(int id)
     {
-      _logger.LogInformation("REQUEST - {0}", id);
+      mLogger.LogInformation("REQUEST - {0}", id);
 
       var categoryList = new List<IContent>();
       var response = new ResponseAapi<ICollection<IContent>>();
@@ -141,7 +165,7 @@ namespace Pixstock.Service.Web.Controllers
     [HttpGet("{id}/albc/{link_id}")]
     public ResponseAapi<Category> GetCategoryLink_albc(int id, int link_id)
     {
-      _logger.LogInformation("REQUEST - {0}/albc/{1}", id, link_id);
+      mLogger.LogInformation("REQUEST - {0}/albc/{1}", id, link_id);
 
       var response = new ResponseAapi<Category>();
       response.Value = new Category { Id = link_id, Name = "リンクカテゴリ " + link_id };
@@ -149,18 +173,20 @@ namespace Pixstock.Service.Web.Controllers
     }
 
     /// <summary>
-    /// 
+    /// カテゴリと関連付けされた子階層カテゴリを取得します
     /// </summary>
     /// <remarks>
-    ///    GET api/category/{id}/cc/{link_id}
     /// </remarks>
     /// <param name="id"></param>
     /// <param name="link_id"></param>
-    /// <returns></returns>
+    /// <response code="200">カテゴリと関連付けられた子階層カテゴリを取得しました</response>
+    /// <response code="400">指定した項目が取得できませんでした</response>
     [HttpGet("{id}/cc/{link_id}")]
-    public ResponseAapi<ICategory> GetCategoryLink_cc(int id, int link_id)
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public ActionResult<ResponseAapi<ICategory>> GetCategoryLink_cc(int id, int link_id)
     {
-      _logger.LogInformation("REQUEST - {0}/cc/{1}", id, link_id);
+      mLogger.LogInformation("REQUEST - {0}/cc/{1}", id, link_id);
       var response = new ResponseAapi<ICategory>();
 
       var linkedCategory = this.mCategoryRepository.FindChildren(id).Where(prop => prop.Id == link_id).SingleOrDefault();
@@ -174,59 +200,67 @@ namespace Pixstock.Service.Web.Controllers
           response.Link.Add("cc_available", true);
         }
       }
+      else
+      {
+        return NotFound();
+      }
 
       return response;
     }
 
     /// <summary>
-    /// カテゴリ情報とリンクしているアーティファクト情報を取得
+    /// カテゴリと関連付けされたコンテントを取得します
     /// </summary>
     /// <remarks>
-    ///    GET api/category/{id}/la/{link_id}
-    ///    
     ///    コンテント情報取得と同じ情報量を返します。
     /// </remarks>
     /// <param name="id"></param>
-    /// <param name="la_id"></param>
-    /// <returns></returns>
-    [HttpGet("{id}/la/{la_id}")]
-    public ResponseAapi<IContent> GetCategoryLink_la(int id, int la_id)
+    /// <param name="link_id"></param>
+    /// <response code="200">カテゴリと関連付けられたコンテントを取得しました</response>
+    /// <response code="400">指定した項目が取得できませんでした</response>
+    [HttpGet("{id}/la/{link_id}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public ActionResult<ResponseAapi<IContent>> GetCategoryLink_la(int id, int link_id)
     {
-      _logger.LogInformation("REQUEST - {0}/la/{1}", id, la_id);
+      mLogger.LogInformation("REQUEST - {0}/la/{1}", id, link_id);
 
       var response = new ResponseAapi<IContent>();
+      var linkedContent = this.mCategoryRepository.Load(id).GetContentList().Where(prop => prop.Id == link_id).SingleOrDefault();
 
-      var content = mContentRepository.Load(la_id);
-      if (content != null)
+      if (linkedContent != null)
       {
-        if (content.GetCategory().Id != id)
-          throw new InterfaceOperationException();
-        response.Value = content;
+        mBuilder.AttachContentEntity(link_id, response);
       }
       else
       {
-        throw new InterfaceOperationException();
+        return NotFound();
       }
 
       return response;
     }
 
-    // POST api/values
+    /// <summary>
+    /// 新しいカテゴリを登録します（未実装）
+    /// </summary>
+    /// <param name="value"></param>
     [HttpPost]
-    public void Post([FromBody] string value) { }
+    public void Post([FromBody] string value)
+    {
+    }
 
     /// <summary>
-    /// カテゴリ表示増加API
+    /// カテゴリの表示回数を更新します
     /// </summary>
-    /// <remarks>
-    ///   PUT api/category/{id}/read
-    /// </remarks>
-    /// <param name="id">カテゴリ情報のキー</param>
-    /// <param name="value">使用しない</param>
+    /// <param name="id">更新対象のカテゴリを示すキー</param>
+    /// <response code="200">カテゴリの表示回数を更新しました</response>
+    /// <response code="400">指定した項目が取得できませんでした</response>
     [HttpPut("{id}/read")]
-    public void PutReadableCategory(int id)
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public ActionResult PutReadableCategory(int id)
     {
-      _logger.LogInformation("REQUEST - {0}/read", id);
+      mLogger.LogInformation("REQUEST - {0}/read", id);
 
       var category = mCategoryRepository.Load(id);
       if (category != null)
@@ -239,33 +273,38 @@ namespace Pixstock.Service.Web.Controllers
         category.LastReadDate = DateTime.Now;
         category.ReadableCount = category.ReadableCount + 1;
         mCategoryRepository.Save();
+        return Ok();
       }
       else
       {
-        throw new InterfaceOperationException();
+        return NotFound();
       }
     }
 
     /// <summary>
-    /// カテゴリ情報更新API
+    /// カテゴリのパラメータを更新します
     /// </summary>
     /// <remarks>
-    ///   PUT api/category/{id}
     /// </remarks>
-    /// <param name="id"></param>
-    /// <param name="value"></param>
+    /// <param name="id">更新対象のカテゴリを示すキー</param>
+    /// <param name="value">カテゴリの更新対象のパラメータが含まれるJSON文字列</param>
     [HttpPut("{id}")]
     public void PutCategoryProp(int id, [FromBody] string value)
     {
-      _logger.LogInformation("REQUEST - {0} Body={1}", id, value);
+      mLogger.LogInformation("REQUEST - {0} Body={1}", id, value);
 
       mCategoryRepository.UpdatePopulateFromJson(id, value);
       mCategoryRepository.Save();
     }
 
-    // DELETE api/values/5
+    /// <summary>
+    /// カテゴリを削除します（未実装）
+    /// </summary>
+    /// <param name="id"></param>
     [HttpDelete("{id}")]
-    public void Delete(int id) { }
+    public void Delete(int id)
+    {
+    }
 
     /// <summary>
     /// カテゴリ情報リンク取得
@@ -279,11 +318,9 @@ namespace Pixstock.Service.Web.Controllers
     /// "cc" : 子階層のカテゴリ情報リストを取得します。
     /// </remarks>
     /// <returns></returns>
-    private ResponseAapi<ICollection<ICategory>> GetCategoryLink(int id, string link_type)
+    private ICollection<ICategory> GetCategoryLink(int id, string link_type)
     {
       var categoryList = new List<ICategory>();
-
-      var response = new ResponseAapi<ICollection<ICategory>>();
 
       if (link_type == "pc")
       {
@@ -299,8 +336,7 @@ namespace Pixstock.Service.Web.Controllers
         );
       }
 
-      response.Value = categoryList;
-      return response;
+      return categoryList;
     }
 
   }
