@@ -36,7 +36,7 @@ namespace Pixstock.Service.Web
 
     //private bool _alreadyDisposed = false;
 
-    private SimpleInjector.Container _Container;
+    private SimpleInjector.Container mContainer;
 
     public string ApplicationDirectoryPath => _ApplicationDirectoryPath;
 
@@ -74,9 +74,13 @@ namespace Pixstock.Service.Web
       _logger.LogInformation("_ApplicationDirectoryPath = " + _ApplicationDirectoryPath);
     }
 
+    /// <summary>
+    /// DIコンテナへ生成インスタンスの登録を行います
+    /// </summary>
+    /// <param name="container"></param>
     public void SetDiContainer(SimpleInjector.Container container)
     {
-      this._Container = container;
+      this.mContainer = container;
 
       container.RegisterInstance<IApplicationContext>(this);
       container.Register<ICategoryRepository, CategoryRepository>();
@@ -100,7 +104,7 @@ namespace Pixstock.Service.Web
       container.RegisterInstance<IMessagingManager>(messagingManager);
 
       // 拡張機能
-      var extentionManager = new ExtentionManager(container);
+      var extentionManager = new ExtentionManager(container, mLoggerFactory);
       //extentionManager.AddPlugin(typeof(FullBuildExtention)); // 開発中は常に拡張機能を読み込む
       //extentionManager.AddPlugin(typeof(WebScribeExtention)); // 開発中は常に拡張機能を読み込む
       container.RegisterInstance<ExtentionManager>(extentionManager);
@@ -163,7 +167,7 @@ namespace Pixstock.Service.Web
 
       const string appdb_structure_version_key = "APPDB_VER";
 
-      var @dbc = (AppDbContext)_Container.GetInstance<IAppDbContext>(); // DIコンテナがリソースの開放を行う
+      var @dbc = (AppDbContext)mContainer.GetInstance<IAppDbContext>(); // DIコンテナがリソースの開放を行う
       bool isInitializeDatabase = false;
       var @repo = new AppAppMetaInfoRepository(@dbc);
       try
@@ -262,7 +266,7 @@ namespace Pixstock.Service.Web
 
       const string appdb_structure_version_key = "APPDB_VER";
 
-      var @dbc = (ThumbnailDbContext)_Container.GetInstance<IThumbnailDbContext>(); // DIコンテナがリソースの開放を行う
+      var @dbc = (ThumbnailDbContext)mContainer.GetInstance<IThumbnailDbContext>(); // DIコンテナがリソースの開放を行う
       bool isInitializeDatabase = false;
       var @repo = new ThumbnailAppMetaInfoRepository(@dbc);
       try
