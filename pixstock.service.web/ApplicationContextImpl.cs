@@ -112,7 +112,7 @@ namespace Pixstock.Service.Web
       extentionManager.CompletePlugin();
 
       // VFS機能
-      var vspFileUpdateWatchManager = new VspFileUpdateWatchManager(container);
+      var vspFileUpdateWatchManager = new VspFileUpdateWatchManager(container, mLoggerFactory);
       container.RegisterInstance<VspFileUpdateWatchManager>(vspFileUpdateWatchManager);
     }
 
