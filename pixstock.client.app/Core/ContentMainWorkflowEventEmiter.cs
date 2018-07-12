@@ -14,6 +14,9 @@ using RestSharp;
 
 namespace pixstock.apl.app.core
 {
+    /// <summary>
+    /// Deprecated
+    /// </summary>
     public class ContentMainWorkflowEventEmiter
     {
         //private static Logger _logger = LogManager.GetCurrentClassLogger();

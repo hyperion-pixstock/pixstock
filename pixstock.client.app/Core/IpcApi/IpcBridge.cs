@@ -60,6 +60,8 @@ namespace pixstock.apl.app.core.IpcApi
             foreach (var ext in localContainer.GetAllInstances<IIpcExtention>())
             {
                 requestHandlerFactory.Add(ext.IpcMessageName, ext.RequestHandler);
+                Console.WriteLine("[IPC][RegisterHandler] " + ext.IpcMessageName);
+
                 Electron.IpcMain.On(ext.IpcMessageName, (param) =>
                 {
                     Console.WriteLine(string.Format("[IPC][Receive] {0}", ext.IpcMessageName));

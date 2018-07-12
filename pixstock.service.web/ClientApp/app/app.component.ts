@@ -3,6 +3,10 @@ import {CollectionViewer, SelectionChange} from '@angular/cdk/collections';
 import {FlatTreeControl} from '@angular/cdk/tree';
 import {BehaviorSubject, merge, Observable} from 'rxjs';
 import { map } from 'rxjs/operators';
+import { MessagingService } from './service/messaging.service';
+import { Message } from '@angular/compiler/src/i18n/i18n_ast';
+import { IpcUpdatePropResponse } from './service/contract/response.contract';
+import { DeliveryService } from './service/delivery.service';
 
 /** Flat node with expandable and level information */
 export class DynamicFlatNode {
@@ -83,11 +87,21 @@ export class DynamicDataSource {
    * Toggle the node, remove from display list
    */
   toggleNode(node: DynamicFlatNode, expand: boolean) {
+    // node: 子階層を追加したい、親ノードのアイテム
+
     const children = this.database.getChildren(node.item);
-    const index = this.data.indexOf(node);
+    const index = this.data.indexOf(node); // 子階層を追加する親階層ノードのFlatNodeList内の位置を取得する
+
     if (!children || index < 0) { // If no children, or cannot find the node, no op
       return;
     }
+
+    // ここで、nodeの子階層を取得する処理を実行する
+    // 例:
+    // setTimeoutを使って取得処理の遅延を演出している
+    //
+    // 仕組み案
+    // ・コールバックを登録する
 
     node.isLoading = true;
 
@@ -95,7 +109,8 @@ export class DynamicDataSource {
       if (expand) {
         const nodes = children.map(name =>
           new DynamicFlatNode(name, node.level + 1, this.database.isExpandable(name)));
-        console.info("Node=",nodes);
+        console.info("Node=", nodes);
+
         this.data.splice(index + 1, 0, ...nodes);
       } else {
         let count = 0;
@@ -121,7 +136,10 @@ export class DynamicDataSource {
 export class AppComponent {
   title = 'Asp Net Core 2.1 Angular 6 Template';
 
-  constructor(database: DynamicDatabase) {
+  constructor(database: DynamicDatabase,
+    public messaging: MessagingService,
+    private delivery: DeliveryService
+  ) {
     this.treeControl = new FlatTreeControl<DynamicFlatNode>(this.getLevel, this.isExpandable);
     this.dataSource = new DynamicDataSource(this.treeControl, database);
 
@@ -137,4 +155,33 @@ export class AppComponent {
   isExpandable = (node: DynamicFlatNode) => node.expandable;
 
   hasChild = (_: number, _nodeData: DynamicFlatNode) => _nodeData.expandable;
+
+  // サンプル
+  // ボタン押下で、InvalidatePropイベントを発生させる
+  onDebugBasicButton() {
+    console.info("onDebugBasicButton");
+    let obj: IpcUpdatePropResponse = {
+      PropertyName: "TEST Propety Name",
+      Value: "VALUE"
+    };
+    this.messaging.fireInvalidateProp(obj);
+  }
+
+  /**
+   * サンプル
+   */
+  onTRNS_TOPSCREEN() {
+    console.info("onTRNS_TOPSCREEN");
+
+    this.delivery.transTopScreen();
+  }
+
+  /**
+   * サンプル
+   */
+  onDebugBasicButton2() {
+    console.info("onDebugBasicButton2");
+
+    this.delivery.executeDebugCommand("Nanikaなにか");
+  }
 }
