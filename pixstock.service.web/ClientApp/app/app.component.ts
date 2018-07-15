@@ -162,6 +162,7 @@ export class AppComponent {
     console.info("onDebugBasicButton");
     let obj: IpcUpdatePropResponse = {
       PropertyName: "TEST Propety Name",
+      Hint: "HINT",
       Value: "VALUE"
     };
     this.messaging.fireInvalidateProp(obj);
@@ -174,6 +175,11 @@ export class AppComponent {
     console.info("onTRNS_TOPSCREEN");
 
     this.delivery.transTopScreen();
+  }
+
+  onACT_REQINVALIDATE_CATEGORYTREE() {
+    console.info("onACT_REQINVALIDATE_CATEGORYTREE");
+    this.delivery.updateCategoryTree();
   }
 
   /**

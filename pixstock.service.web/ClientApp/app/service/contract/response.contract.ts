@@ -1,4 +1,4 @@
-﻿import { Content } from "../../model/content.model";
+import { Content } from "../../model/content.model";
 import { Category } from "../../model/category.model";
 
 export interface IpcResponse {
@@ -22,8 +22,9 @@ export interface ContentDetailResponse {
  * IPC_UPDATEPROPイベントのパラメータ
  */
 export interface IpcUpdatePropResponse {
-    PropertyName: string;
-    Value: any;
+  PropertyName: string;
+  Hint: string;
+  Value: any;
 }
 
 /**

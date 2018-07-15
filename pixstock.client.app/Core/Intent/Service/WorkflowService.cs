@@ -8,90 +8,88 @@ using Microsoft.Extensions.Logging;
 
 namespace pixstock.apl.app.core.Intent.Service
 {
-    /// <summary>
-    ///
-    /// </summary>
-    public class WorkflowService : IMessagingServiceExtention
+  /// <summary>
+  ///
+  /// </summary>
+  public class WorkflowService : IMessagingServiceExtention
+  {
+    public const string COMMONMESSAGE_BACKTRANSITION = "ACT_BACKSCREEN";
+
+    private ILogger mLogger;
+
+    public ServiceType ServiceType => ServiceType.Workflow;
+
+    readonly HarmonicManager mHarmonic;
+
+    readonly Perspective mPixstockPerspective;
+
+    public Container Container { get; set; }
+
+    public WorkflowService()
     {
-        public const string COMMONMESSAGE_BACKTRANSITION = "ACT_BACKSCREEN";
+      mHarmonic = new HarmonicManager();
 
-        private ILogger mLogger;
+      var dictPerspective = new Dictionary<string, string>();
+      dictPerspective.Add("MainFrame", "PixstockMainContent");
+      mPixstockPerspective = new Perspective("PIXSTOCK", ArbitrationMode.AWAB, dictPerspective, mHarmonic);
+    }
 
-        public ServiceType ServiceType => ServiceType.Workflow;
+    public void Execute(string intentMessage, object parameter)
+    {
+      var screenManager = Container.GetInstance<IScreenManager>();
 
-        readonly HarmonicManager mHarmonic;
+      this.mLogger.LogDebug(LoggingEvents.Undefine, "[Execute] IN");
+      this.mLogger.LogDebug(LoggingEvents.Undefine, "[Execute] intentMessage={IntentMessage} Parameter={Parameter}", intentMessage, parameter);
 
-        readonly Perspective mPixstockPerspective;
-
-        public Container Container { get; set; }
-
-        public WorkflowService()
+      if (mPixstockPerspective.Status == PerspectiveStatus.Active)
+      {
+        if (intentMessage == COMMONMESSAGE_BACKTRANSITION)
         {
-            mHarmonic = new HarmonicManager();
-
-            var dictPerspective = new Dictionary<string, string>();
-            dictPerspective.Add("MainFrame", "PixstockMainContent");
-            mPixstockPerspective = new Perspective("PIXSTOCK", ArbitrationMode.AWAB, dictPerspective, mHarmonic);
+          screenManager.BackScreen();
         }
-
-        public void Execute(string intentMessage, object parameter)
+        else
         {
-            var screenManager = Container.GetInstance<IScreenManager>();
-
-            this.mLogger.LogDebug(LoggingEvents.Undefine, "[WorkflowService][Execute]");
-            this.mLogger.LogDebug(LoggingEvents.Undefine, " intentMessage = " + intentMessage);
-            this.mLogger.LogDebug(LoggingEvents.Undefine, " parameter = " + parameter);
-
-            if (mPixstockPerspective.Status == PerspectiveStatus.Active)
+          foreach (var content in mPixstockPerspective.Contents)
+          {
+            if (content is IPixstockContent)
             {
-                if (intentMessage == COMMONMESSAGE_BACKTRANSITION)
-                {
-                    screenManager.BackScreen();
-                }
-                else
-                {
-                    foreach (var content in mPixstockPerspective.Contents)
-                    {
-                        if (content is IPixstockContent)
-                        {
-                            ((IPixstockContent)content).FireWorkflowEvent(Container, intentMessage, parameter);
-
-                            screenManager.UpdateScreenTransitionView(parameter);
-                        }
-                    }
-                }
+              ((IPixstockContent)content).FireWorkflowEvent(Container, intentMessage, parameter);
+              screenManager.UpdateScreenTransitionView(parameter);
             }
+          }
         }
-
-        public void InitializeExtention()
-        {
-
-        }
-
-        public void Verify()
-        {
-            ILoggerFactory loggerFactory = this.Container.GetInstance<ILoggerFactory>();
-            this.mLogger = loggerFactory.CreateLogger(this.GetType().FullName);
-
-            List<IContentBuilder> contentBuilders = new List<IContentBuilder>();
-            contentBuilders.Add(new MyContentBuilder() { Container = this.Container });
-
-            // Harmonicマネージャの初期化
-            //    ・Contentの登録も行う
-            //    ・Perspectiveの登録も行う
-            mHarmonic.Verify(contentBuilders);
-            mHarmonic.RegisterPerspective(mPixstockPerspective);
-            mHarmonic.StartPerspective("PIXSTOCK"); // 開発中のみ、ここでPerspectiveを開始する
-        }
+      }
     }
 
-    class MyContentBuilder : IContentBuilder
+    public void InitializeExtention()
     {
-        public Container Container { get; set; }
 
-        public Content Build()
-        {
-            return new PixstockMainContent(Container);
-        }
     }
+
+    public void Verify()
+    {
+      ILoggerFactory loggerFactory = this.Container.GetInstance<ILoggerFactory>();
+      this.mLogger = loggerFactory.CreateLogger(this.GetType().FullName);
+
+      List<IContentBuilder> contentBuilders = new List<IContentBuilder>();
+      contentBuilders.Add(new MyContentBuilder() { Container = this.Container });
+
+      // Harmonicマネージャの初期化
+      //    ・Contentの登録も行う
+      //    ・Perspectiveの登録も行う
+      mHarmonic.Verify(contentBuilders);
+      mHarmonic.RegisterPerspective(mPixstockPerspective);
+      mHarmonic.StartPerspective("PIXSTOCK"); // 開発中のみ、ここでPerspectiveを開始する
+    }
+  }
+
+  class MyContentBuilder : IContentBuilder
+  {
+    public Container Container { get; set; }
+
+    public Content Build()
+    {
+      return new PixstockMainContent(Container);
+    }
+  }
 }

@@ -53,14 +53,11 @@ In(States.ROOT)
 .On(Events.ACT_DEBUGCOMMAND)
 .Execute<object>(ACT_DEBUGCOMMAND);
 In(States.ROOT)
-.On(Events.ACT_CATEGORYTREE_UPDATE)
-.Execute<object>(ACT_CATEGORYTREE_UPDATE);
+.On(Events.ACT_REQINVALIDATE_CATEGORYTREE)
+.Execute<object>(ACT_REQINVALIDATE_CATEGORYTREE);
 In(States.ROOT)
-.On(Events.ACT_THUMBNAILLIST_UPDATE)
-.Execute<object>(ACT_THUMBNAILLIST_UPDATE);
-In(States.ROOT)
-.On(Events.ACT_PREVIEW_UPDATE)
-.Execute<object>(ACT_PREVIEW_UPDATE);
+.On(Events.ACT_RESINVALIDATE_CATEGORYTREE)
+.Execute<object>(ACT_RESINVALIDATE_CATEGORYTREE);
 In(States.Dashboard)
 .ExecuteOnEntry(__FTC_Event_Dashboard_Entry);
 In(States.Dashboard)
@@ -99,20 +96,15 @@ public virtual async Task ACT_DEBUGCOMMAND(object param) {
 	await OnACT_DEBUGCOMMAND(param);
 	Events.ACT_DEBUGCOMMAND.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
 }
-public virtual async Task ACT_CATEGORYTREE_UPDATE(object param) {
-	Events.ACT_CATEGORYTREE_UPDATE.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
-	await OnACT_CATEGORYTREE_UPDATE(param);
-	Events.ACT_CATEGORYTREE_UPDATE.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
+public virtual async Task ACT_REQINVALIDATE_CATEGORYTREE(object param) {
+	Events.ACT_REQINVALIDATE_CATEGORYTREE.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
+	await OnACT_REQINVALIDATE_CATEGORYTREE(param);
+	Events.ACT_REQINVALIDATE_CATEGORYTREE.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
 }
-public virtual async Task ACT_THUMBNAILLIST_UPDATE(object param) {
-	Events.ACT_THUMBNAILLIST_UPDATE.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
-	await OnACT_THUMBNAILLIST_UPDATE(param);
-	Events.ACT_THUMBNAILLIST_UPDATE.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
-}
-public virtual async Task ACT_PREVIEW_UPDATE(object param) {
-	Events.ACT_PREVIEW_UPDATE.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
-	await OnACT_PREVIEW_UPDATE(param);
-	Events.ACT_PREVIEW_UPDATE.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
+public virtual async Task ACT_RESINVALIDATE_CATEGORYTREE(object param) {
+	Events.ACT_RESINVALIDATE_CATEGORYTREE.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
+	await OnACT_RESINVALIDATE_CATEGORYTREE(param);
+	Events.ACT_RESINVALIDATE_CATEGORYTREE.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
 }
 public virtual async Task __FTC_Event_Dashboard_Entry() {
 ICollection<int> ribbonMenuEventId = new List<int>{  };

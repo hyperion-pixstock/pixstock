@@ -95,7 +95,10 @@
     <h3>Basic Buttons</h3>
     <div class="button-row">
       <button mat-button (click)="onDebugBasicButton()">Basic</button>
-      <button mat-button (click)="onTRNS_TOPSCREEN()" color="primary">TRNS_TOPSCREEN</button>
+      <div>
+        <button mat-button (click)="onTRNS_TOPSCREEN()" color="primary">TRNS_TOPSCREEN</button>
+        <button mat-button (click)="onACT_REQINVALIDATE_CATEGORYTREE()" color="primary">ACT_REQINVALIDATE_CATEGORYTREE</button>
+      </div>
       <button mat-button (click)="onDebugBasicButton2()" color="accent">onDebugBasicButton2</button>
       <button mat-button color="warn">Warn</button>
       <button mat-button disabled>Disabled</button>

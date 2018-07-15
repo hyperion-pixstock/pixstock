@@ -30,16 +30,12 @@ export class MessagingService {
     this.internalIpcUpdatePropResponse = response;
   }
 
-  constructor() {
-    // DEBUG
-    // BehaviorSubjectを使用したイベントの購読方法のサンプル
-    this.invalidateProp$.subscribe((response: IpcUpdatePropResponse) => {
-      console.info("invalidatePropイベントの処理呼び出し1", response);
-    });
 
-    this.invalidateProp$.subscribe((response: IpcUpdatePropResponse) => {
-      console.info("invalidatePropイベントの処理呼び出し2", response);
-    });
+  /**
+   * コンストラクタ
+   */
+  constructor() {
+    this.invalidateProp$.subscribe(this.onInvalidateProp);
   }
 
   /**
@@ -57,6 +53,7 @@ export class MessagingService {
         // NOTE: VFFに送信するIPCイベントをすべて登録する
         componentFn_MSG_SHOW_CONTENTPREVIEW: (event: any, arg: any) => this.onMSG_SHOW_CONTENTPREVIEW(event, arg),
         componentFn_MSG_SHOW_CONTENLIST: (event: any, arg: any) => this.onMSG_SHOW_CONTENLIST(event, arg),
+        componentFn_IPC_ALIVE: (event: any, arg: any) => this.onIPC_ALIVE(event, arg),
         componentFn_IPC_UPDATEVIEW: (event: any, arg: any) => this.onIPC_UPDATEVIEW(event, arg),
         componentFn_IPC_UPDATEPROP: (event: any, arg: any) => this.onIPC_UPDATEPROP(event, arg)
       };
@@ -78,6 +75,14 @@ export class MessagingService {
         var ntv_window: any = window;
         ntv_window.angularComponentRef.zone.run(() => {
           ntv_window.angularComponentRef_PixstockNetService.componentFn_MSG_SHOW_CONTENLIST(event, arg);
+        });
+      });
+
+      // IPC_ALIVEメッセージ
+      this.ipcRenderer.on('IPC_ALIVE', (event: any, arg: any) => {
+        var ntv_window: any = window;
+        ntv_window.angularComponentRef.zone.run(() => {
+          ntv_window.angularComponentRef_PixstockNetService.componentFn_IPC_ALIVE(event, arg);
         });
       });
 
@@ -109,6 +114,10 @@ export class MessagingService {
     //this.ShowContentList.emit(args);
   }
 
+  private onIPC_ALIVE(event: any, args: any) {
+    console.debug("[Pixstock][Messaging][onIPC_ALIVE] : Execute");
+  }
+
   private onIPC_UPDATEVIEW(event: any, args: IpcResponse) {
     console.debug("[Pixstock][Messaging][onIPC_UPDATEVIEW] : Execute", args);
 
@@ -133,7 +142,7 @@ export class MessagingService {
     var responseObj = JSON.parse(args.body) as IpcUpdatePropResponse;
 
     // DUMP
-    console.debug(responseObj);
+    console.debug("[Pixstock][Messaging][onIPC_UPDATEPROP] : Dump Response", responseObj);
 
     //this.InvalidateProp.emit(responseObj);
 
@@ -143,7 +152,20 @@ export class MessagingService {
     this.fireInvalidateProp(responseObj);
   }
 
-  /*private*/ public fireInvalidateProp(eventArgs: IpcUpdatePropResponse) {
+  /*private*/ public fireInvalidateProp(eventArgs: IpcUpdatePropResponse) { // サンプルで手動で呼び出せるように、publicにしている。本来はprivate。
     this.invalidateObject = eventArgs;
+  }
+
+  onInvalidateProp(response: IpcUpdatePropResponse) {
+    console.debug("[Pixstock][Messaging][onInvalidateProp] IN");
+    if (response == undefined) return;
+
+    switch (response.PropertyName) {
+      case "CategoryTree":
+        console.debug("[Pixstock][Messaging][onInvalidateProp] CategoryTreeプロパティ更新");
+
+        // DEBUG: 
+        break;
+    }
   }
 }

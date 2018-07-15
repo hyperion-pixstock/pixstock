@@ -88,7 +88,7 @@ export class DeliveryService {
     console.info("[Pixstock][Delivery][updateCategoryTree] ", );
     var intentMessage = new IntentMessage();
     intentMessage.ServiceType = "Workflow";
-    intentMessage.MessageName = "ACT_CATEGORYTREE_UPDATE";
+    intentMessage.MessageName = "ACT_REQINVALIDATE_CATEGORYTREE";
     intentMessage.Parameter = "1"; // TODO: パラメータの値は仮のもの。
 
     this.send(intentMessage);

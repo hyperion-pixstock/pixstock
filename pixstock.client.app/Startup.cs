@@ -45,7 +45,7 @@ namespace pixstock.client.app
       logger.LogInformation("Starting BFF");
       logger.LogDebug("Debug Level Enable");
 
-      InitializeContainer(app);
+      InitializeContainer(app, loggerFactory);
 
       if (env.IsDevelopment())
       {
@@ -103,7 +103,7 @@ namespace pixstock.client.app
       services.UseSimpleInjectorAspNetRequestScoping(mContainer);
     }
 
-    private void InitializeContainer(IApplicationBuilder app)
+    private void InitializeContainer(IApplicationBuilder app, ILoggerFactory loggerFactory)
     {
       // Add application presentation components:
       mContainer.RegisterMvcControllers(app);
@@ -125,7 +125,7 @@ namespace pixstock.client.app
       mContainer.RegisterInstance<IMemoryCache>(memCache);
 
       // Ipcマネージャの初期化
-      var ipcBridge = new IpcBridge(mContainer);
+      var ipcBridge = new IpcBridge(mContainer,loggerFactory);
       mContainer.RegisterInstance<IRequestHandlerFactory>(ipcBridge.Initialize());
 
       // ServiceDistorionマネージャの初期化

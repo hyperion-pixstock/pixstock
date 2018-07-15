@@ -18,9 +18,8 @@ public class CLS_CategoryList : States {}
 public class CLS_CategoryListBase : States {}
 public class CLS_Preview : States {}
 public class CLS_ACT_DEBUGCOMMAND : Events {}
-public class CLS_ACT_CATEGORYTREE_UPDATE : Events {}
-public class CLS_ACT_THUMBNAILLIST_UPDATE : Events {}
-public class CLS_ACT_PREVIEW_UPDATE : Events {}
+public class CLS_ACT_REQINVALIDATE_CATEGORYTREE : Events {}
+public class CLS_ACT_RESINVALIDATE_CATEGORYTREE : Events {}
 public class CLS_CategorySelectBtnClick : Events {}
 public class CLS_ACT_ContinueCategoryList : Events {}
 public class CLS_ACT_UpperCategoryList : Events {}
@@ -61,9 +60,8 @@ public partial class Events : WorkflowEventBase {
             return cacheEventsDict[name];
         }
 	public static CLS_ACT_DEBUGCOMMAND ACT_DEBUGCOMMAND { get; } = new CLS_ACT_DEBUGCOMMAND();
-	public static CLS_ACT_CATEGORYTREE_UPDATE ACT_CATEGORYTREE_UPDATE { get; } = new CLS_ACT_CATEGORYTREE_UPDATE();
-	public static CLS_ACT_THUMBNAILLIST_UPDATE ACT_THUMBNAILLIST_UPDATE { get; } = new CLS_ACT_THUMBNAILLIST_UPDATE();
-	public static CLS_ACT_PREVIEW_UPDATE ACT_PREVIEW_UPDATE { get; } = new CLS_ACT_PREVIEW_UPDATE();
+	public static CLS_ACT_REQINVALIDATE_CATEGORYTREE ACT_REQINVALIDATE_CATEGORYTREE { get; } = new CLS_ACT_REQINVALIDATE_CATEGORYTREE();
+	public static CLS_ACT_RESINVALIDATE_CATEGORYTREE ACT_RESINVALIDATE_CATEGORYTREE { get; } = new CLS_ACT_RESINVALIDATE_CATEGORYTREE();
 	public static CLS_CategorySelectBtnClick CategorySelectBtnClick { get; } = new CLS_CategorySelectBtnClick();
 	public static CLS_ACT_ContinueCategoryList ACT_ContinueCategoryList { get; } = new CLS_ACT_ContinueCategoryList();
 	public static CLS_ACT_UpperCategoryList ACT_UpperCategoryList { get; } = new CLS_ACT_UpperCategoryList();
