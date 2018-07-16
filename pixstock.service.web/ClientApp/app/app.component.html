@@ -105,25 +105,7 @@
       <a mat-button routerLink=".">Link</a>
     </div>
 
-    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-      <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
-        <button mat-icon-button disabled></button>
-        {{node.item}}
-      </mat-tree-node>
-      <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
-        <button mat-icon-button
-                [attr.aria-label]="'toggle ' + node.filename" matTreeNodeToggle>
-          <mat-icon class="mat-icon-rtl-mirror">
-            {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
-          </mat-icon>
-        </button>
-        {{node.item}}
-        <mat-progress-spinner *ngIf="node.isLoading"
-                              mode="indeterminate"
-                              diameter="23"
-                              class="example-tree-progress-spinner"></mat-progress-spinner>
-      </mat-tree-node>
-    </mat-tree>
+    <category-tree></category-tree>
 
     <!--Footer-->
     <footer class="page-footer mdb-color text-center text-md-left pt-4 mt-4">

@@ -83,13 +83,15 @@ export class DeliveryService {
 
   /**
    * カテゴリ一覧の更新を行います
+   *
+   * @param categoryId カテゴリツリーを取得したい親カテゴリのID
    */
-  public updateCategoryTree() {
+  public updateCategoryTree(categoryId: number) {
     console.info("[Pixstock][Delivery][updateCategoryTree] ", );
     var intentMessage = new IntentMessage();
     intentMessage.ServiceType = "Workflow";
     intentMessage.MessageName = "ACT_REQINVALIDATE_CATEGORYTREE";
-    intentMessage.Parameter = "1"; // TODO: パラメータの値は仮のもの。
+    intentMessage.Parameter = categoryId.toString();
 
     this.send(intentMessage);
   }

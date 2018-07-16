@@ -1,27 +1,22 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, NO_ERRORS_SCHEMA, NgZone } from '@angular/core';
+import { NgModule, NgZone } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { MatButtonModule, MatCheckboxModule, MatIconModule, MatProgressBarModule, MatProgressSpinnerModule, MatSidenavModule, MatTreeModule } from '@angular/material';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
-
 import { AppComponent } from './app.component';
 import { DisplayMapComponent } from './components/displayMap/displayMap.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  MatButtonModule, MatCheckboxModule, MatTreeModule, MatIconModule,
-  MatProgressBarModule, MatProgressSpinnerModule,
-  MatSidenavModule
-} from '@angular/material';
-
-import { MessagingService } from './service/messaging.service';
+import { CategoryTreeFragment } from './components/fragment/category-tree/category-tree.fragment';
 import { DeliveryService } from './service/delivery.service';
+import { MessagingService } from './service/messaging.service';
 import { ViewModel } from './viewmodel';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DisplayMapComponent
+    DisplayMapComponent,
+    CategoryTreeFragment
   ],
   imports: [
     BrowserModule,

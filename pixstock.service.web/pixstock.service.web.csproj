@@ -19,6 +19,10 @@
     <EmbeddedResource Include="Assets\Kitting\**\*.txt" />
     <EmbeddedResource Include="Assets\Sql\**\*.txt" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="ClientApp\app\components\fragment\category-tree\category-tree.fragment.ts" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="LiteDB" Version="4.1.4" />
@@ -48,5 +52,9 @@
     <ProjectReference Include="..\Pixstock.Service.Extention.Fullbuild\Pixstock.Service.Extention.FullBuild.csproj" />
     <ProjectReference Include="..\Pixstock.Service.Extention.Webscribe\Pixstock.Service.Extention.Webscribe.csproj" />
     -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\app\components\fragment\category-tree\category-tree.fragment.ts" />
   </ItemGroup>
 </Project>

@@ -1,12 +1,9 @@
 using System;
 using System.Linq;
-using ElectronNET.API;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using pixstock.apl.app.core.Infra;
 using pixstock.apl.app.Models;
-using SimpleInjector;
 using static pixstock.apl.app.core.ScreenManager;
 
 namespace pixstock.apl.app.core.Intent.Service
@@ -74,7 +71,7 @@ namespace pixstock.apl.app.core.Intent.Service
         var memCache = Container.GetInstance<IMemoryCache>();
 
         // MemCacheから、更新通知を行うカテゴリオブジェクトを取得
-        if (memCache.TryGetValue(cacheKey, out Category cachedObject))
+        if (memCache.TryGetValue(cacheKey, out Category[] cachedObject))
         {
           var ipcMessage = new IpcMessage();
           object obj = new

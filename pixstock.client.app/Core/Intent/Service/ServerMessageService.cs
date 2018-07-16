@@ -117,20 +117,59 @@ namespace pixstock.apl.app.core.Intent.Service
       var categoryId = long.Parse(parameter.ToString());
       cacheKey += categoryId;
 
-      if (!memCache.TryGetValue(cacheKey, out Category s))
+      if (!memCache.TryGetValue(cacheKey, out Category[] s))
       {
         // DEBUG: ダミーデータを作成する
         this.mLogger.LogDebug("[OnCategoryTreeLoad] ダミーデータを作成します");
-        s = new Category
+
+        if (categoryId == 1L)
         {
-          LinkSubCategoryList = new List<Category>(new Category[] {
-            new Category{Name="カテゴリ1"},
-            new Category{Name="カテゴリ2"},
-          })
-        };
+          Category[] cs = {
+            new Category
+            {
+              Id = 2,
+              Name = "Child Category01",
+              HasLinkSubCategoryFlag = true
+            },
+            new Category
+            {
+              Id = 3,
+              Name = "Child Category02"
+            },
+            new Category
+            {
+              Id = 4,
+              Name = "Child Category03"
+            }
+          };
+          s = cs;
+        }
+        else if (categoryId == 2L)
+        {
+          Category[] cs = {
+            new Category
+            {
+              Id = 20,
+              Name = "ダミーデータカテゴリ1",
+              HasLinkSubCategoryFlag = true
+            },
+            new Category
+            {
+              Id = 30,
+              Name = "ダミーデータカテゴリ2"
+            },
+            new Category
+            {
+              Id = 40,
+              Name = "ダミーデータカテゴリ3",
+              HasLinkSubCategoryFlag = true
+            }
+          };
+          s = cs;
+        }
 
         var cacheEntryOptions = new MemoryCacheEntryOptions()
-              .SetSlidingExpiration(TimeSpan.FromSeconds(3));
+            .SetSlidingExpiration(TimeSpan.FromSeconds(3));
 
         this.mLogger.LogDebug(LoggingEvents.Undefine, "[OnCategoryTreeLoad] Push MemCache (CacheKey={CacheKey})", cacheKey);
         memCache.Set(cacheKey, s, cacheEntryOptions);
