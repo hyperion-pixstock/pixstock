@@ -8,6 +8,8 @@ import { NgxMapboxGLModule } from 'ngx-mapbox-gl';
 import { AppComponent } from './app.component';
 import { DisplayMapComponent } from './components/displayMap/displayMap.component';
 import { CategoryTreeFragment } from './components/fragment/category-tree/category-tree.fragment';
+import { ContentPreviewFragment } from './components/fragment/content-preview/content-preview.fragment';
+import { ExplorerListFragment } from './components/fragment/explorer-list/explorer-list.fragment';
 import { DeliveryService } from './service/delivery.service';
 import { MessagingService } from './service/messaging.service';
 import { ViewModel } from './viewmodel';
@@ -16,7 +18,9 @@ import { ViewModel } from './viewmodel';
   declarations: [
     AppComponent,
     DisplayMapComponent,
-    CategoryTreeFragment
+    CategoryTreeFragment,
+    ExplorerListFragment,
+    ContentPreviewFragment
   ],
   imports: [
     BrowserModule,

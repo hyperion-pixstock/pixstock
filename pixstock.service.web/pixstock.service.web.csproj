@@ -22,6 +22,8 @@
   
   <ItemGroup>
     <None Remove="ClientApp\app\components\fragment\category-tree\category-tree.fragment.ts" />
+    <None Remove="ClientApp\app\components\fragment\content-preview\content-preview.fragment.ts" />
+    <None Remove="ClientApp\app\components\fragment\explorer-list\explorer-list.fragment.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,5 +58,7 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\app\components\fragment\category-tree\category-tree.fragment.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\fragment\content-preview\content-preview.fragment.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\fragment\explorer-list\explorer-list.fragment.ts" />
   </ItemGroup>
 </Project>
