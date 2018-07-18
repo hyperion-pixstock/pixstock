@@ -1,9 +1,12 @@
-using System;
-using System.Linq;
+using ElectronNET.API;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using pixstock.apl.app.core.Infra;
 using pixstock.apl.app.Models;
+using SimpleInjector;
+using System;
+using System.Linq;
 using static pixstock.apl.app.core.ScreenManager;
 
 namespace pixstock.apl.app.core.Intent.Service
