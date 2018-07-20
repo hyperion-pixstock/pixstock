@@ -11,6 +11,7 @@ using pixstock.apl.app.core.Infra;
 using pixstock.apl.app.core.IpcApi.Response;
 using pixstock.apl.app.json.ServerMessage;
 using pixstock.apl.app.Models;
+using pixstock.client.app.Workflow;
 using SimpleInjector;
 
 namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
@@ -341,6 +342,16 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
     }
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="param"></param>
+    /// <returns></returns>
+    async Task OnACT_REQINVALIDATE_PREVIEW(object param)
+    {
+      this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnACT_REQINVALIDATE_PREVIEW]");
+    }
+
+    /// <summary>
     /// CategoryTree更新通知
     /// </summary>
     /// <param name="param"></param>
@@ -353,6 +364,16 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
       // IpcSendServiceへのIntentメッセージを送信する(カテゴリツリー更新通知メッセージ)
       var intentManager = mContainer.GetInstance<IIntentManager>();
       intentManager.AddIntent(ServiceType.FrontendIpc, "CategoryTree", tgtCategoryId);
+    }
+
+    /// <summary>
+    /// コンテント情報更新通知
+    /// </summary>
+    /// <param name="param"></param>
+    /// <returns></returns>
+    async Task OnACT_RESINVALIDATE_CONTENT(object param)
+    {
+      ResInvalidateContentParameter paramObject = (ResInvalidateContentParameter)param;
     }
   }
 }
