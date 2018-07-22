@@ -1,7 +1,7 @@
 using System;
 using pixstock.apl.app.core.Infra;
 
-namespace pixstock.apl.app.core.IpcApi.Handler {
+namespace pixstock.apl.app.core.Bridge.Handler {
     /// <summary>
     /// ログ出力用のIPCハンドラ
     /// </summary>

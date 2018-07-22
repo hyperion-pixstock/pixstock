@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using pixstock.apl.app.core.Infra;
 using SimpleInjector;
 
-namespace pixstock.apl.app.core.IpcApi
+namespace pixstock.apl.app.core.Bridge
 {
-    public class RequestHandlerFactory : Dictionary<string, Type>, IRequestHandlerFactory
+    public class IpcRequestHandlerFactory : Dictionary<string, Type>, IRequestHandlerFactory
     {
         private readonly Container container;
 
-        public RequestHandlerFactory(Container container)
+        public IpcRequestHandlerFactory(Container container)
         {
             this.container = container;
         }

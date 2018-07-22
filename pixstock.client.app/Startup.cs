@@ -16,7 +16,11 @@ using Microsoft.Extensions.Logging;
 using pixstock.apl.app.core;
 using pixstock.apl.app.core.Infra;
 using pixstock.apl.app.core.Intent;
-using pixstock.apl.app.core.IpcApi;
+using pixstock.apl.app.core.Bridge;
+using pixstock.client.app.Core.Intent;
+using pixstock.client.app.Core.IpcApi;
+using pixstock.client.app.Core.ServerMessageApi;
+using pixstock.client.app.Core.Service;
 using SimpleInjector;
 using SimpleInjector.Integration.AspNetCore.Mvc;
 using SimpleInjector.Lifestyles;
@@ -125,13 +129,11 @@ namespace pixstock.client.app
       mContainer.RegisterInstance<IMemoryCache>(memCache);
 
       // Ipcマネージャの初期化
-      var ipcBridge = new IpcBridge(mContainer,loggerFactory);
+      var ipcBridge = new IpcBridge(mContainer, loggerFactory);
       mContainer.RegisterInstance<IRequestHandlerFactory>(ipcBridge.Initialize());
 
       // ServiceDistorionマネージャの初期化
-      var serviceDistoributionManager = new ServiceDistoributionManager(mContainer);
-      serviceDistoributionManager.Initialize();
-      mContainer.RegisterInstance<IServiceDistoributor>(serviceDistoributionManager);
+      mContainer.Register<IServiceDistoributor, ServiceDistoributionManager>(Lifestyle.Singleton);
 
       // Intentマネージャの初期化
       mContainer.RegisterSingleton<IIntentManager, IntentManager>();
@@ -139,8 +141,14 @@ namespace pixstock.client.app
       // Screenマネージャの初期化
       mContainer.RegisterSingleton<IScreenManager, ScreenManager>();
 
+      // 各種HandlerFactoryの登録
+      mContainer.RegisterInstance<ServiceDistributionResolveHandlerFactory>(new ServiceDistributionResolveHandlerFactory(mContainer));
+      mContainer.RegisterInstance<ServiceMessageResolveHandlerFactory>(new ServiceMessageResolveHandlerFactory(mContainer));
+      mContainer.RegisterInstance<IpcSendResolveHandlerFactory>(new IpcSendResolveHandlerFactory(mContainer));
+
       mContainer.Verify();
-      serviceDistoributionManager.Verify();
+
+      mContainer.GetInstance<WorkflowService.Handler>().Initialize(); // 手動での初期化
     }
   }
 }

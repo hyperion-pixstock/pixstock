@@ -341,14 +341,22 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
       intentManager.AddIntent(ServiceType.Server, "CategoryTreeLoad", tgtCategoryId);
     }
 
+    const int PREVIEWOPERATION_CONTENT = 1;
+    const int PREVIEWOPERATION_CONTENTLISTPOS = 2;
+    const int PREVIEWOPERATION_CONTENTLIST_NEXT = 3;
+    const int PREVIEWOPERATION_CONTENTLIST_PREV = 4;
+
     /// <summary>
-    /// 
+    /// プレビューコンテント更新要求
     /// </summary>
     /// <param name="param"></param>
     /// <returns></returns>
     async Task OnACT_REQINVALIDATE_PREVIEW(object param)
     {
       this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnACT_REQINVALIDATE_PREVIEW]");
+      ReqInvalidatePreviewParameter paramObject = (ReqInvalidatePreviewParameter)param;
+
+
     }
 
     /// <summary>
