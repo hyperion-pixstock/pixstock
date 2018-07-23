@@ -1,7 +1,7 @@
 using System;
 using Hyperion.Pf.Workflow;
 using Hyperion.Pf.Workflow.StateMachine.Eventsas;
-using Microsoft.Extensions.Logging;
+using NLog;
 using pixstock.apl.app.core;
 using pixstock.apl.app.core.Infra;
 using Pixstock.Applus.Foundations.ContentBrowser.Transitions;
@@ -24,13 +24,11 @@ namespace pixstock.apl.app.Workflow
     /// <returns></returns>
     public PixstockMainContent(Container container) : base("PixstockMainContent")
     {
+      this.mLogger = LogManager.GetCurrentClassLogger();
       this.mContainer = container;
       this.mWorkflow = new CategoryTreeTransitionWorkflow(container);
       mWorkflow.InvokeShowFrame += OnInvokeShowFrame;
       mWorkflow.InvokeHideFrame += OnInvokeHideFrame;
-
-      ILoggerFactory loggerFactory = this.mContainer.GetInstance<ILoggerFactory>();
-      this.mLogger = loggerFactory.CreateLogger(this.GetType().FullName);
     }
 
     /// <summary>
@@ -46,7 +44,7 @@ namespace pixstock.apl.app.Workflow
       }
       catch (Exception expr)
       {
-        mLogger.LogError(expr, "[FireWorkflowEvent] Event Not Found (EventName={EventName}).", workflowEvent);
+        mLogger.Error("[FireWorkflowEvent] Event Not Found (EventName={EventName}).", workflowEvent);
       }
     }
 
@@ -67,7 +65,7 @@ namespace pixstock.apl.app.Workflow
       }
       catch (Exception expr)
       {
-        mLogger.LogError(expr, "[OnInvokeShowFrame] Exception.");
+        mLogger.Error(expr, "[OnInvokeShowFrame] Exception.");
       }
     }
 
@@ -86,7 +84,7 @@ namespace pixstock.apl.app.Workflow
       }
       catch (Exception expr)
       {
-        mLogger.LogError(expr, "[OnInvokeHideFrame] Exception.");
+        mLogger.Error(expr, "[OnInvokeHideFrame] Exception.");
       }
     }
 

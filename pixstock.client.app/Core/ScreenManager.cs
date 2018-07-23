@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Extensions.Logging;
+using NLog;
 using pixstock.apl.app.core.Infra;
 using pixstock.apl.app.core.Intent;
 
@@ -52,10 +52,10 @@ namespace pixstock.apl.app.core
     /// コンストラクタ
     /// </summary>
     /// <param name="intentManager"></param>
-    public ScreenManager(IIntentManager intentManager, ILoggerFactory loggerFactory)
+    public ScreenManager(IIntentManager intentManager)
     {
       this.mIntentManager = intentManager;
-      this.mLogger = loggerFactory.CreateLogger(this.GetType().FullName);
+      this.mLogger = LogManager.GetCurrentClassLogger();
       this.mBackTrantionMap = Builder.Make(); // 戻る遷移テーブルを取得　
     }
 
@@ -64,7 +64,7 @@ namespace pixstock.apl.app.core
     /// </summary>
     public void BackScreen()
     {
-      mLogger.LogInformation(LoggingEvents.Undefine, string.Format("[BackScreen] mTransBackStack.Count: {0}", mTransBackStack.Count));
+      mLogger.Info(string.Format("[BackScreen] mTransBackStack.Count: {0}", mTransBackStack.Count));
 
       if (mTransBackStack.Count < 2)
         return;
@@ -76,24 +76,24 @@ namespace pixstock.apl.app.core
 
       string currentScreen = lastScreen.mScreenName;  // 戻る遷移での遷移先画面状態名(戻るスタックから取得する)
       string transitionScreen = nextScreen.mScreenName; // 戻る遷移での遷移先画面状態名(戻るスタックから取得する)
-      mLogger.LogInformation(LoggingEvents.Undefine, string.Format("[BackScreen] currentScreen: {0}  transitionScreen: {1}", currentScreen, transitionScreen));
+      mLogger.Info(string.Format("[BackScreen] currentScreen: {0}  transitionScreen: {1}", currentScreen, transitionScreen));
 
       if (mBackTrantionMap.ContainsKey(currentScreen))
       {
         var backTransitionEventName = (from u in mBackTrantionMap[currentScreen]
                                        where u.TransitionScreenName == transitionScreen
                                        select u.TransitionEventName).FirstOrDefault();
-        mLogger.LogInformation(LoggingEvents.Undefine, string.Format("[BackScreen] backTransitionEventName: {0}", backTransitionEventName));
+        mLogger.Info(string.Format("[BackScreen] backTransitionEventName: {0}", backTransitionEventName));
 
         if (!string.IsNullOrEmpty(backTransitionEventName))
         {
-          mLogger.LogWarning(LoggingEvents.Undefine, string.Format("[BackScreen] 戻る遷移テーブルから、戻り先「{0}」を見つけることができません", transitionScreen));
+          mLogger.Warn(string.Format("[BackScreen] 戻る遷移テーブルから、戻り先「{0}」を見つけることができません", transitionScreen));
           mIntentManager.AddIntent(ServiceType.Workflow, backTransitionEventName, "FACTOR=BACK");
         }
       }
       else
       {
-        mLogger.LogWarning(LoggingEvents.Undefine, string.Format("[BackScreen] 戻る遷移テーブルから「{0}」を見つけることができません", currentScreen));
+        mLogger.Warn(string.Format("[BackScreen] 戻る遷移テーブルから「{0}」を見つけることができません", currentScreen));
       }
     }
 
@@ -103,7 +103,7 @@ namespace pixstock.apl.app.core
     /// <param name="screenName">表示するスクリーン名</param>
     public void ShowScreen(string screenName)
     {
-      mLogger.LogInformation(LoggingEvents.Undefine, string.Format("[ShowScreen] ScreenName={0}", screenName));
+      mLogger.Info(string.Format("[ShowScreen] ScreenName={0}", screenName));
       this.RemoveScreenBackStackItem(screenName);
       this.mTransBackStack.Add(new ScreenItem(screenName));
 
@@ -134,8 +134,8 @@ namespace pixstock.apl.app.core
     /// <param name="param"></param>
     public void UpdateScreenTransitionView(object param)
     {
-      this.mLogger.LogDebug(LoggingEvents.Undefine, "[UpdateScreenTransitionView] - IN");
-      this.mLogger.LogDebug(LoggingEvents.Undefine, "[UpdateScreenTransitionView] Count=" + mScreenTransitionEventList.Count);
+      this.mLogger.Debug("[UpdateScreenTransitionView] - IN");
+      this.mLogger.Debug("[UpdateScreenTransitionView] Count=" + mScreenTransitionEventList.Count);
       var viewEventList = new List<UpdateViewIntentParameter>();
 
       var copy = new List<ScreenEventItem>(mScreenTransitionEventList);
@@ -244,7 +244,7 @@ namespace pixstock.apl.app.core
         sb.AppendLine(prop.mScreenName);
       }
 
-      mLogger.LogDebug(LoggingEvents.Undefine, sb.ToString());
+      mLogger.Debug(sb.ToString());
     }
 
     private void RemoveScreenBackStackItem(string screenName)

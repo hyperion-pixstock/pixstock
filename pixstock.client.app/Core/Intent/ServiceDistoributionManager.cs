@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Logging;
+using NLog;
 using pixstock.apl.app.core.Infra;
 using pixstock.apl.app.core.IpcApi;
 using pixstock.client.app.Core.Intent;
@@ -18,15 +18,15 @@ namespace pixstock.apl.app.core.Intent
     /// <summary>
     /// コンストラクタ
     /// </summary>
-    public ServiceDistoributionManager(ServiceDistributionResolveHandlerFactory factory, ILoggerFactory loggerFactory)
+    public ServiceDistoributionManager(ServiceDistributionResolveHandlerFactory factory)
     {
       this.mFactory = factory;
-      this.mLogger = loggerFactory.CreateLogger(this.GetType().FullName);
+      this.mLogger = LogManager.GetCurrentClassLogger();
     }
     
     public void ExecuteService(ServiceType service, string intentName, object parameter)
     {
-      this.mLogger.LogDebug(LoggingEvents.Undefine, "[ExecuteService] ServiceType={ServiceType} IntentName={IntentName}", service, intentName);
+      this.mLogger.Debug("[ExecuteService] ServiceType={ServiceType} IntentName={IntentName}", service, intentName);
       try
       {
         // 各サービスへは、Intentパラメータとして処理を呼び出す
@@ -35,7 +35,7 @@ namespace pixstock.apl.app.core.Intent
       }
       catch (Exception expr)
       {
-        mLogger.LogError(LoggingEvents.Undefine, expr, "[ExecuteService] Failer Service");
+        mLogger.Error(expr, "[ExecuteService] Failer Service");
       }
     }
     

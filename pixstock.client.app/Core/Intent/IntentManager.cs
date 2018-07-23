@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using NLog;
 using pixstock.apl.app.core.Infra;
 
 namespace pixstock.apl.app.core.Intent
@@ -18,11 +18,11 @@ namespace pixstock.apl.app.core.Intent
     ///コンストラクタ
     /// </summary>
     /// <param name="queue"></param>
-    public IntentManager(IBackgroundTaskQueue queue, IServiceDistoributor distributor, ILoggerFactory loggerFactory)
+    public IntentManager(IBackgroundTaskQueue queue, IServiceDistoributor distributor)
     {
       this.mBackgroundTaskQueue = queue;
       this.mServiceDistoributor = distributor;
-      this.mLogger = loggerFactory.CreateLogger(this.GetType().FullName);
+      this.mLogger = LogManager.GetCurrentClassLogger();
     }
 
     public void AddIntent(ServiceType service, string intentName, object parameter)
@@ -31,7 +31,7 @@ namespace pixstock.apl.app.core.Intent
 
       async Task ExecuteItem(CancellationToken token)
       {
-        this.mLogger.LogDebug(LoggingEvents.Undefine, "[ExecuteItem] IntentName={IntentName}", intentName);
+        this.mLogger.Debug("[ExecuteItem] IntentName={IntentName}", intentName);
 
         //await Task.Delay(TimeSpan.FromSeconds(5), token); //デバッグ用のウェイト
 

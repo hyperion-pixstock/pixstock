@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using NLog;
 using pixstock.apl.app.core;
 using pixstock.apl.app.core.Cache;
 using pixstock.apl.app.core.Dao;
@@ -25,9 +25,7 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
     public CategoryTreeTransitionWorkflow(Container container)
     {
       this.mContainer = container;
-
-      ILoggerFactory loggerFactory = container.GetInstance<ILoggerFactory>();
-      this.mLogger = loggerFactory.CreateLogger(this.GetType().FullName);
+      this.mLogger = LogManager.GetCurrentClassLogger();
     }
 
     async Task OnHomePageBase_Entry()
@@ -61,7 +59,7 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
 
     async Task OnRESPONSE_GETCATEGORY(object param)
     {
-      this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnRESPONSE_GETCATEGORY]");
+      this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnRESPONSE_GETCATEGORY]");
       await Task.Delay(1);
 
       var intentManager = mContainer.GetInstance<IIntentManager>();
@@ -92,7 +90,7 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
 
     async Task OnRESPONSE_GETCATEGORYCONTENT(object param)
     {
-      this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnRESPONSE_GETCATEGORYCONTENT]");
+      this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnRESPONSE_GETCATEGORYCONTENT]");
       var intentManager = mContainer.GetInstance<IIntentManager>();
       var memCache = mContainer.GetInstance<IMemoryCache>();
       CategoryDetailResponse response;
@@ -114,7 +112,7 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
 
     async Task OnCategorySelectBtnClick(object param)
     {
-      this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnCategorySelectBtnClick]");
+      this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnCategorySelectBtnClick]");
 
       var intentManager = mContainer.GetInstance<IIntentManager>();
       var memCache = mContainer.GetInstance<IMemoryCache>();
@@ -146,7 +144,7 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
 
         await Task.Run(() =>
         {
-          this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnACT_DEBUGCOMMAND] param={0}", param);
+          this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnACT_DEBUGCOMMAND] param={0}", param);
           var screenManager = mContainer.GetInstance<IScreenManager>();
 
           screenManager.DumpBackStack();
@@ -162,7 +160,7 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
     {
       try
       {
-        this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnACT_DISPLAY_PREVIEWCURRENTLIST] param={0}", param);
+        this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnACT_DISPLAY_PREVIEWCURRENTLIST] param={0}", param);
         var intentManager = mContainer.GetInstance<IIntentManager>();
         var memCache = mContainer.GetInstance<IMemoryCache>();
 
@@ -181,7 +179,7 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
 
           if (paramObj.UpdateLastDisplayContent)
           {
-            this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnACT_DISPLAY_PREVIEWCURRENTLIST] UpdateLastDisplayContent=true, Category={0}", objContentList.Category);
+            this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnACT_DISPLAY_PREVIEWCURRENTLIST] UpdateLastDisplayContent=true, Category={0}", objContentList.Category);
             if (objContentList.Category != null)
             {
 
@@ -216,7 +214,7 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
 
     async Task OnACT_UpperCategoryList(object param)
     {
-      this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnACT_UpperCategoryList]");
+      this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnACT_UpperCategoryList]");
 
       var intentManager = mContainer.GetInstance<IIntentManager>();
       var memCache = mContainer.GetInstance<IMemoryCache>();
@@ -244,13 +242,13 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
       }
       catch (Exception expr)
       {
-        this.mLogger.LogError(expr, "メッセージの処理に失敗しました");
+        this.mLogger.Error(expr, "メッセージの処理に失敗しました");
       }
     }
 
     async Task OnRESPONSE_GETCONTENT(object param)
     {
-      this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnRESPONSE_GETCONTENT]");
+      this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnRESPONSE_GETCONTENT]");
 
       var intentManager = mContainer.GetInstance<IIntentManager>();
       var memCache = mContainer.GetInstance<IMemoryCache>();
@@ -275,24 +273,24 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
     {
       try
       {
-        this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnACT_CATEGORYTREE_UPDATE] ");
+        this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnACT_CATEGORYTREE_UPDATE] ");
 
         var intentManager = mContainer.GetInstance<IIntentManager>();
         var memCache = mContainer.GetInstance<IMemoryCache>();
 
-        this.mLogger.LogDebug(LoggingEvents.Undefine, "1" + param.ToString());
+        this.mLogger.Debug("1" + param.ToString());
 
         long tgtCategoryId = long.Parse(param.ToString());
 
         // TODO: サーバに問い合わせるためのIntentメッセージを発行する
-        this.mLogger.LogDebug(LoggingEvents.Undefine, "2");
+        this.mLogger.Debug("2");
 
         // TODOの間は、ハードコードされたダミーデータを取得したことにする
         List<Category> subCategoryList = new List<Category>();
         subCategoryList.Add(new Category { Id = 2L, Name = "サブカテゴリA" });
         subCategoryList.Add(new Category { Id = 3L, Name = "サブカテゴリB" });
         subCategoryList.Add(new Category { Id = 4L, Name = "サブカテゴリC" });
-        this.mLogger.LogDebug(LoggingEvents.Undefine, "3");
+        this.mLogger.Debug("3");
         memCache.Set("CategoryList", new CategoryListParam
         {
           Category = new Category
@@ -303,25 +301,25 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
           CategoryList = subCategoryList.ToArray()
         });
 
-        this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnACT_CATEGORYTREE_UPDATE] Execute 'CategoryList' IntentMessage");
+        this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnACT_CATEGORYTREE_UPDATE] Execute 'CategoryList' IntentMessage");
         intentManager.AddIntent(ServiceType.FrontendIpc, "UpdateProp", "CategoryList");
       }
       catch (Exception expr)
       {
-        this.mLogger.LogDebug(LoggingEvents.Undefine, expr, "Error");
+        this.mLogger.Debug(expr, "Error");
       }
     }
 
     async Task OnACT_THUMBNAILLIST_UPDATE(object param)
     {
-      this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnACT_THUMBNAILLIST_UPDATE]");
+      this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnACT_THUMBNAILLIST_UPDATE]");
 
       // TODO: サーバに問い合わせるためのIntentメッセージを発行する
     }
 
     async Task OnACT_PREVIEW_UPDATE(object param)
     {
-      this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnACT_PREVIEW_UPDATE]");
+      this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnACT_PREVIEW_UPDATE]");
 
       // TODO: サーバに問い合わせるためのIntentメッセージを発行する
     }
@@ -333,7 +331,7 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
     /// <returns></returns>
     async Task OnACT_REQINVALIDATE_CATEGORYTREE(object param)
     {
-      this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnACT_REQINVALIDATE_CATEGORYTREE]");
+      this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnACT_REQINVALIDATE_CATEGORYTREE]");
       long tgtCategoryId = long.Parse(param.ToString());
 
       // ServerMessageServiceへのIntentメッセージを送信する（CategroyTree更新指示メッセージ）
@@ -353,7 +351,7 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
     /// <returns></returns>
     async Task OnACT_REQINVALIDATE_PREVIEW(object param)
     {
-      this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnACT_REQINVALIDATE_PREVIEW]");
+      this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnACT_REQINVALIDATE_PREVIEW]");
       ReqInvalidatePreviewParameter paramObject = (ReqInvalidatePreviewParameter)param;
 
 
@@ -366,7 +364,7 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions
     /// <returns></returns>
     async Task OnACT_RESINVALIDATE_CATEGORYTREE(object param)
     {
-      this.mLogger.LogDebug(LoggingEvents.Undefine, "[CategoryTreeTransitionWorkflow][OnACT_RESINVALIDATE_CATEGORYTREE]");
+      this.mLogger.Debug("[CategoryTreeTransitionWorkflow][OnACT_RESINVALIDATE_CATEGORYTREE]");
       long tgtCategoryId = long.Parse(param.ToString());
 
       // IpcSendServiceへのIntentメッセージを送信する(カテゴリツリー更新通知メッセージ)

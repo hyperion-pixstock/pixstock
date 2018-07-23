@@ -24,6 +24,7 @@ using pixstock.client.app.Core.Service;
 using SimpleInjector;
 using SimpleInjector.Integration.AspNetCore.Mvc;
 using SimpleInjector.Lifestyles;
+using NLog;
 
 namespace pixstock.client.app
 {
@@ -31,7 +32,7 @@ namespace pixstock.client.app
   {
     private Container mContainer = new Container();
 
-    private ILogger logger;
+    private Logger _logger = LogManager.GetCurrentClassLogger();
 
     // This method gets called by the runtime. Use this method to add services to the container.
     // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -43,13 +44,12 @@ namespace pixstock.client.app
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
-      logger = loggerFactory.CreateLogger<Program>();
-      logger.LogInformation("Starting BFF");
-      logger.LogDebug("Debug Level Enable");
+      _logger.Info("Starting BFF");
+      _logger.Debug("Debug Level Enable");
 
-      InitializeContainer(app, loggerFactory);
+      InitializeContainer(app);
 
       if (env.IsDevelopment())
       {
@@ -107,7 +107,7 @@ namespace pixstock.client.app
       services.UseSimpleInjectorAspNetRequestScoping(mContainer);
     }
 
-    private void InitializeContainer(IApplicationBuilder app, ILoggerFactory loggerFactory)
+    private void InitializeContainer(IApplicationBuilder app)
     {
       // Add application presentation components:
       mContainer.RegisterMvcControllers(app);
@@ -129,7 +129,7 @@ namespace pixstock.client.app
       mContainer.RegisterInstance<IMemoryCache>(memCache);
 
       // Ipcマネージャの初期化
-      var ipcBridge = new IpcBridge(mContainer, loggerFactory);
+      var ipcBridge = new IpcBridge(mContainer);
       mContainer.RegisterInstance<IRequestHandlerFactory>(ipcBridge.Initialize());
 
       // ServiceDistorionマネージャの初期化

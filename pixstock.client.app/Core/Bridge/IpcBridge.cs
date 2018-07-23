@@ -1,12 +1,11 @@
+using ElectronNET.API;
+using Newtonsoft.Json.Linq;
+using NLog;
+using pixstock.apl.app.core.Infra;
+using SimpleInjector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ElectronNET.API;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
-//using NLog;
-using pixstock.apl.app.core.Infra;
-using SimpleInjector;
 
 namespace pixstock.apl.app.core.Bridge
 {
@@ -17,7 +16,7 @@ namespace pixstock.apl.app.core.Bridge
   {
     const string IPCEXTENTION_NAMESPACE = "pixstock.apl.app.core.Bridge.Message";
 
-    private readonly ILogger mLogger;
+    readonly ILogger mLogger;
 
     readonly Container mContainer;
 
@@ -25,10 +24,10 @@ namespace pixstock.apl.app.core.Bridge
     /// コンストラクタ
     /// </summary>
     /// <param name="container"></param>
-    public IpcBridge(Container container, ILoggerFactory loggerFactory)
+    public IpcBridge(Container container)
     {
+      this.mLogger = LogManager.GetCurrentClassLogger();
       this.mContainer = container;
-      this.mLogger = loggerFactory.CreateLogger<IpcBridge>();
     }
 
     /// <summary>
@@ -52,17 +51,17 @@ namespace pixstock.apl.app.core.Bridge
       List<Type> implementationList = new List<Type>();
       foreach (var reg in registrations)
       {
-        mLogger.LogInformation("[Initialize] Register");
+        mLogger.Info("[Initialize] Register");
         implementationList.Add(reg.Implementation);
       }
       localContainer.RegisterCollection<IIpcExtention>(implementationList);
       localContainer.Verify();
-      mLogger.LogInformation("[Initialize] Register Complete");
+      mLogger.Info("[Initialize] Register Complete");
 
       // 受信したIPCメッセージを処理するハンドラを登録
       foreach (var ext in localContainer.GetAllInstances<IIpcExtention>())
       {
-        mLogger.LogInformation("[Initialize] " + ext.IpcMessageName);
+        mLogger.Info("[Initialize] " + ext.IpcMessageName);
 
         requestHandlerFactory.Add(ext.IpcMessageName, ext.RequestHandler);
         Electron.IpcMain.On(ext.IpcMessageName, ExecuteHandler);
@@ -70,7 +69,7 @@ namespace pixstock.apl.app.core.Bridge
         // IPC受信時の処理
         void ExecuteHandler(object param)
         {
-          mLogger.LogInformation(string.Format("[IPC][Receive] {0}", ext.IpcMessageName));
+          mLogger.Info(string.Format("[IPC][Receive] {0}", ext.IpcMessageName));
 
           var factory = mContainer.GetInstance<IRequestHandlerFactory>();
           var handler = factory.CreateNew(ext.IpcMessageName);

@@ -1,6 +1,6 @@
 using System;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using NLog;
 using pixstock.apl.app.core.Infra;
 
 namespace pixstock.apl.app.core.Bridge.Handler
@@ -19,15 +19,15 @@ namespace pixstock.apl.app.core.Bridge.Handler
     /// </summary>
     /// <param name="intentManager"></param>
     /// <param name="loggerFactory"></param>
-    public PixstockIntentHandler(IIntentManager intentManager, ILoggerFactory loggerFactory)
+    public PixstockIntentHandler(IIntentManager intentManager)
     {
       this.mIntentManager = intentManager;
-      mLogger = loggerFactory.CreateLogger<PixstockIntentHandler>();
+      mLogger = LogManager.GetCurrentClassLogger();
     }
 
     public void Handle(IpcMessage param)
     {
-      mLogger.LogDebug("[Handle(IpcMessage)] - IN " + param);
+      mLogger.Debug("[Handle(IpcMessage)] - IN " + param);
 
       try
       {
@@ -37,7 +37,7 @@ namespace pixstock.apl.app.core.Bridge.Handler
       }
       catch (Exception expr)
       {
-        mLogger.LogError(expr, "[Handle(IpcMessage)] Faile Deserialize");
+        mLogger.Error(expr, "[Handle(IpcMessage)] Faile Deserialize");
       }
     }
   }

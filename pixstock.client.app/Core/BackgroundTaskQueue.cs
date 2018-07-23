@@ -2,7 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using NLog;
 using pixstock.apl.app.core.Infra;
 
 namespace pixstock.apl.app.core
@@ -15,9 +15,9 @@ namespace pixstock.apl.app.core
 
     private SemaphoreSlim _signal = new SemaphoreSlim(0);
 
-    public BackgroundTaskQueue(ILoggerFactory loggerFactory)
+    public BackgroundTaskQueue()
     {
-      mLogger = loggerFactory.CreateLogger<BackgroundTaskQueue>();
+      mLogger = LogManager.GetCurrentClassLogger();
     }
 
     public void QueueBackgroundWorkItem(Func<CancellationToken, Task> workItem)
@@ -34,7 +34,7 @@ namespace pixstock.apl.app.core
     public async Task<Func<CancellationToken, Task>> DequeueAsync(
         CancellationToken cancellationToken)
     {
-      mLogger.LogDebug("[DequeueAsync] IN");
+      mLogger.Debug("[DequeueAsync] IN");
       await _signal.WaitAsync(cancellationToken);
       _workItems.TryDequeue(out var workItem);
 
