@@ -11,8 +11,8 @@ using Pixstock.Service.Infra.Exception;
 using Pixstock.Service.Infra.Model;
 using Pixstock.Service.Infra.Repository;
 using Pixstock.Service.Model;
-using Microsoft.Extensions.Logging;
 using Pixstock.Service.Web.Model;
+using NLog;
 
 namespace Pixstock.Service.Web.Controllers
 {
@@ -24,7 +24,7 @@ namespace Pixstock.Service.Web.Controllers
   [ApiController]
   public class CategoryController : Controller
   {
-    private readonly ILogger mLogger;
+    private readonly Logger mLogger;
 
     private readonly ApiResponseBuilder mBuilder;
 
@@ -37,14 +37,13 @@ namespace Pixstock.Service.Web.Controllers
     /// <summary>
     /// コンストラクタ
     /// </summary>
-    /// <param name="loggerFactory">ログ生成器</param>
     /// <param name="builder"></param>
     /// <param name="extentionManager"></param>
     /// <param name="categoryRepository"></param>
     /// <param name="contentRepository"></param>
-    public CategoryController(ILoggerFactory loggerFactory, ApiResponseBuilder builder, ExtentionManager extentionManager, ICategoryRepository categoryRepository, IContentRepository contentRepository)
+    public CategoryController(ApiResponseBuilder builder, ExtentionManager extentionManager, ICategoryRepository categoryRepository, IContentRepository contentRepository)
     {
-      this.mLogger = loggerFactory.CreateLogger<CategoryController>();
+      this.mLogger = LogManager.GetCurrentClassLogger();
       this.mBuilder = builder;
       this.mCategoryRepository = categoryRepository;
       this.mExtentionManager = extentionManager;
@@ -140,7 +139,7 @@ namespace Pixstock.Service.Web.Controllers
     [ProducesResponseType(200)]
     public ActionResult<ResponseAapi<ICollection<IContent>>> GetCategoryLink_la(int id)
     {
-      mLogger.LogInformation("REQUEST - {0}", id);
+      mLogger.Info("REQUEST - {0}", id);
 
       var categoryList = new List<IContent>();
       var response = new ResponseAapi<ICollection<IContent>>();
@@ -154,7 +153,7 @@ namespace Pixstock.Service.Web.Controllers
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <remarks>
     ///    GET api/category/{id}/albc/{link_id}
@@ -165,7 +164,7 @@ namespace Pixstock.Service.Web.Controllers
     [HttpGet("{id}/albc/{link_id}")]
     public ResponseAapi<Category> GetCategoryLink_albc(int id, int link_id)
     {
-      mLogger.LogInformation("REQUEST - {0}/albc/{1}", id, link_id);
+      mLogger.Info("REQUEST - {0}/albc/{1}", id, link_id);
 
       var response = new ResponseAapi<Category>();
       response.Value = new Category { Id = link_id, Name = "リンクカテゴリ " + link_id };
@@ -186,7 +185,7 @@ namespace Pixstock.Service.Web.Controllers
     [ProducesResponseType(400)]
     public ActionResult<ResponseAapi<ICategory>> GetCategoryLink_cc(int id, int link_id)
     {
-      mLogger.LogInformation("REQUEST - {0}/cc/{1}", id, link_id);
+      mLogger.Info("REQUEST - {0}/cc/{1}", id, link_id);
       var response = new ResponseAapi<ICategory>();
 
       var linkedCategory = this.mCategoryRepository.FindChildren(id).Where(prop => prop.Id == link_id).SingleOrDefault();
@@ -223,7 +222,7 @@ namespace Pixstock.Service.Web.Controllers
     [ProducesResponseType(400)]
     public ActionResult<ResponseAapi<IContent>> GetCategoryLink_la(int id, int link_id)
     {
-      mLogger.LogInformation("REQUEST - {0}/la/{1}", id, link_id);
+      mLogger.Info("REQUEST - {0}/la/{1}", id, link_id);
 
       var response = new ResponseAapi<IContent>();
       var linkedContent = this.mCategoryRepository.Load(id).GetContentList().Where(prop => prop.Id == link_id).SingleOrDefault();
@@ -260,7 +259,7 @@ namespace Pixstock.Service.Web.Controllers
     [ProducesResponseType(400)]
     public ActionResult PutReadableCategory(int id)
     {
-      mLogger.LogInformation("REQUEST - {0}/read", id);
+      mLogger.Info("REQUEST - {0}/read", id);
 
       var category = mCategoryRepository.Load(id);
       if (category != null)
@@ -291,7 +290,7 @@ namespace Pixstock.Service.Web.Controllers
     [HttpPut("{id}")]
     public void PutCategoryProp(int id, [FromBody] string value)
     {
-      mLogger.LogInformation("REQUEST - {0} Body={1}", id, value);
+      mLogger.Info("REQUEST - {0} Body={1}", id, value);
 
       mCategoryRepository.UpdatePopulateFromJson(id, value);
       mCategoryRepository.Save();
@@ -313,7 +312,7 @@ namespace Pixstock.Service.Web.Controllers
     /// <param name="link_type">リンクタイプを指定します。</param>
     /// <remarks>
     /// GET api/category/{id}/{link_type}
-    /// link_type = 
+    /// link_type =
     /// "pc" : 親階層のカテゴリ情報を取得します
     /// "cc" : 子階層のカテゴリ情報リストを取得します。
     /// </remarks>

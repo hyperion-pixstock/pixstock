@@ -50,6 +50,12 @@ In(States.Preview)
 .On(Events.TRNS_BACK)
 .Goto(States.CategoryListBase);
 In(States.ROOT)
+.On(Events.RESPONSE_GETCATEGORY)
+.Execute<object>(RESPONSE_GETCATEGORY);
+In(States.ROOT)
+.On(Events.RESPONSE_GETCATEGORYCONTENT)
+.Execute<object>(RESPONSE_GETCATEGORYCONTENT);
+In(States.ROOT)
 .On(Events.ACT_DEBUGCOMMAND)
 .Execute<object>(ACT_DEBUGCOMMAND);
 In(States.ROOT)
@@ -58,6 +64,18 @@ In(States.ROOT)
 In(States.ROOT)
 .On(Events.ACT_RESINVALIDATE_CATEGORYTREE)
 .Execute<object>(ACT_RESINVALIDATE_CATEGORYTREE);
+In(States.ROOT)
+.On(Events.ACT_REQINVALIDATE_CONTENTLIST)
+.Execute<object>(ACT_REQINVALIDATE_CONTENTLIST);
+In(States.ROOT)
+.On(Events.ACT_RESINVALIDATE_CONTENTLIST)
+.Execute<object>(ACT_RESINVALIDATE_CONTENTLIST);
+In(States.ROOT)
+.On(Events.ACT_REQINVALIDATE_PREVIEW)
+.Execute<object>(ACT_REQINVALIDATE_PREVIEW);
+In(States.ROOT)
+.On(Events.ACT_RESINVALIDATE_CONTENT)
+.Execute<object>(ACT_RESINVALIDATE_CONTENT);
 In(States.Dashboard)
 .ExecuteOnEntry(__FTC_Event_Dashboard_Entry);
 In(States.Dashboard)
@@ -91,6 +109,16 @@ In(States.Preview)
 .Execute<object>(RESPONSE_GETCONTENT);
 	Initialize(States.INIT);
 }
+public virtual async Task RESPONSE_GETCATEGORY(object param) {
+	Events.RESPONSE_GETCATEGORY.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
+	await OnRESPONSE_GETCATEGORY(param);
+	Events.RESPONSE_GETCATEGORY.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
+}
+public virtual async Task RESPONSE_GETCATEGORYCONTENT(object param) {
+	Events.RESPONSE_GETCATEGORYCONTENT.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
+	await OnRESPONSE_GETCATEGORYCONTENT(param);
+	Events.RESPONSE_GETCATEGORYCONTENT.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
+}
 public virtual async Task ACT_DEBUGCOMMAND(object param) {
 	Events.ACT_DEBUGCOMMAND.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
 	await OnACT_DEBUGCOMMAND(param);
@@ -105,6 +133,26 @@ public virtual async Task ACT_RESINVALIDATE_CATEGORYTREE(object param) {
 	Events.ACT_RESINVALIDATE_CATEGORYTREE.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
 	await OnACT_RESINVALIDATE_CATEGORYTREE(param);
 	Events.ACT_RESINVALIDATE_CATEGORYTREE.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
+}
+public virtual async Task ACT_REQINVALIDATE_CONTENTLIST(object param) {
+	Events.ACT_REQINVALIDATE_CONTENTLIST.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
+	await OnACT_REQINVALIDATE_CONTENTLIST(param);
+	Events.ACT_REQINVALIDATE_CONTENTLIST.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
+}
+public virtual async Task ACT_RESINVALIDATE_CONTENTLIST(object param) {
+	Events.ACT_RESINVALIDATE_CONTENTLIST.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
+	await OnACT_RESINVALIDATE_CONTENTLIST(param);
+	Events.ACT_RESINVALIDATE_CONTENTLIST.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
+}
+public virtual async Task ACT_REQINVALIDATE_PREVIEW(object param) {
+	Events.ACT_REQINVALIDATE_PREVIEW.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
+	await OnACT_REQINVALIDATE_PREVIEW(param);
+	Events.ACT_REQINVALIDATE_PREVIEW.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
+}
+public virtual async Task ACT_RESINVALIDATE_CONTENT(object param) {
+	Events.ACT_RESINVALIDATE_CONTENT.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
+	await OnACT_RESINVALIDATE_CONTENT(param);
+	Events.ACT_RESINVALIDATE_CONTENT.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
 }
 public virtual async Task __FTC_Event_Dashboard_Entry() {
 ICollection<int> ribbonMenuEventId = new List<int>{  };

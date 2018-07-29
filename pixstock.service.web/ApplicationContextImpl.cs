@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using Hyperion.Pf.Entity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using NLog;
 using Pixstock.Nc.Common;
 using Pixstock.Nc.Srv.Ext;
 using Pixstock.Service.Core;
@@ -26,11 +26,9 @@ namespace Pixstock.Service.Web
 {
   public class ApplicationContextImpl : IApplicationContext
   {
-    private ILogger _logger;
+    private readonly Logger _logger;
 
     public IBuildAssemblyParameter _AssemblyParameter;
-
-    readonly private ILoggerFactory mLoggerFactory;
 
     private string _ApplicationDirectoryPath;
 
@@ -50,14 +48,13 @@ namespace Pixstock.Service.Web
 
     public string ExtentionDirectoryPath => Path.Combine(ApplicationDirectoryPath, @"extention");
 
-    public ApplicationContextImpl(IBuildAssemblyParameter parameter, ILoggerFactory loggerFactory)
+    public ApplicationContextImpl(IBuildAssemblyParameter parameter)
     {
+      _logger = LogManager.GetCurrentClassLogger();
+
       _ApplicationDirectoryPath = "";
 
       _AssemblyParameter = parameter;
-
-      mLoggerFactory = loggerFactory;
-      _logger = mLoggerFactory.CreateLogger(typeof(ApplicationContextImpl));
 
       if (parameter.Params["AbsoluteApplicationDirectoryBase"] == "true")
       {
@@ -71,7 +68,7 @@ namespace Pixstock.Service.Web
       }
 
       this.ApplicationFileVersionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
-      _logger.LogInformation("_ApplicationDirectoryPath = " + _ApplicationDirectoryPath);
+      _logger.Info("_ApplicationDirectoryPath = " + _ApplicationDirectoryPath);
     }
 
     /// <summary>
@@ -104,7 +101,7 @@ namespace Pixstock.Service.Web
       container.RegisterInstance<IMessagingManager>(messagingManager);
 
       // 拡張機能
-      var extentionManager = new ExtentionManager(container, mLoggerFactory);
+      var extentionManager = new ExtentionManager(container);
       //extentionManager.AddPlugin(typeof(FullBuildExtention)); // 開発中は常に拡張機能を読み込む
       //extentionManager.AddPlugin(typeof(WebScribeExtention)); // 開発中は常に拡張機能を読み込む
       container.RegisterInstance<ExtentionManager>(extentionManager);
@@ -112,13 +109,13 @@ namespace Pixstock.Service.Web
       extentionManager.CompletePlugin();
 
       // VFS機能
-      var vspFileUpdateWatchManager = new VspFileUpdateWatchManager(container, mLoggerFactory);
+      var vspFileUpdateWatchManager = new VspFileUpdateWatchManager(container);
       container.RegisterInstance<VspFileUpdateWatchManager>(vspFileUpdateWatchManager);
     }
 
     public void Initialize()
     {
-      _logger.LogTrace(LoggingEvents.InitializeApplication, "アプリケーションの初期化を開始します");
+      _logger.Trace("アプリケーションの初期化を開始します");
       try
       {
         CreateSettingSQLite();
@@ -129,10 +126,10 @@ namespace Pixstock.Service.Web
       }
       catch (Exception expr)
       {
-        _logger.LogError(LoggingEvents.InitializeApplication, expr, "初期化に失敗しました.", expr.Message);
+        _logger.Error(expr, "初期化に失敗しました.", expr.Message);
         throw new ApplicationException();
       }
-      _logger.LogTrace(LoggingEvents.InitializeApplication, "アプリケーションの初期化を終了します");
+      _logger.Trace("アプリケーションの初期化を終了します");
     }
 
     /// <summary>
@@ -195,7 +192,7 @@ namespace Pixstock.Service.Web
           }
         }
 
-        _logger.LogInformation("SQLファイル({FilePath})から、CREATEを読み込みます", filePath);
+        _logger.Info("SQLファイル({FilePath})から、CREATEを読み込みます", filePath);
         @dbc.Database.ExecuteSqlCommand(sqltext);
         @dbc.SaveChanges();
 
@@ -222,7 +219,7 @@ namespace Pixstock.Service.Web
         {
           System.Reflection.Assembly assm = System.Reflection.Assembly.GetExecutingAssembly();
           var initializeSqlFilePath = this._AssemblyParameter.Params["InitializeSqlAppDb"];
-          _logger.LogInformation($"アプリケーションデータベース初期化SQLファイルを読み込みます path:{initializeSqlFilePath}");
+          _logger.Info($"アプリケーションデータベース初期化SQLファイルを読み込みます path:{initializeSqlFilePath}");
           string sqltext = "";
           using (var stream = assm.GetManifestResourceStream(initializeSqlFilePath))
           {
@@ -293,7 +290,7 @@ namespace Pixstock.Service.Web
           }
         }
 
-        _logger.LogInformation("SQLファイルから、CREATEを読み込みます");
+        _logger.Info("SQLファイルから、CREATEを読み込みます");
         @dbc.Database.ExecuteSqlCommand(sqltext);
         @dbc.SaveChanges();
 
@@ -347,7 +344,7 @@ namespace Pixstock.Service.Web
         var matcher = r.Match(rf);
         if (matcher.Success && matcher.Groups.Count > 1)
         {
-          _logger.LogInformation("{0}データベースのアップデート({1} -> {2})", dbselect, version, matcher.Groups[1].Value);
+          _logger.Info("{0}データベースのアップデート({1} -> {2})", dbselect, version, matcher.Groups[1].Value);
           UpgradeDatabase(rf, @dbc);
           currentVersion = matcher.Groups[1].Value; // 正規表現にマッチした箇所が、マイグレート後のバージョンになります。
         }

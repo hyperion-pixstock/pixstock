@@ -1,6 +1,6 @@
 <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
   <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
-    <button mat-icon-button disabled></button>{{node.item.Name}}
+    <button mat-icon-button disabled></button>{{node.item.Name}} <button mat-button (click)="node.showContentList()">表示</button>
   </mat-tree-node>
   <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
     <button mat-icon-button
@@ -9,7 +9,7 @@
         {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
       </mat-icon>
     </button>
-    {{node.item.Name}}
+    {{node.item.Name}} <button mat-button (click)="node.showContentList()">表示</button>
     <mat-progress-spinner *ngIf="node.isLoading"
                           mode="indeterminate"
                           diameter="23"

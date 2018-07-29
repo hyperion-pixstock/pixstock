@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using NLog;
 using Pixstock.Nc.Common;
 using Pixstock.Nc.Srv.Ext;
 using Pixstock.Service.Core;
@@ -28,7 +28,7 @@ namespace Pixstock.Service.Web
   {
     private readonly Container container = new Container();
 
-    private ILogger logger;
+    private Logger _logger = LogManager.GetCurrentClassLogger();
 
     private IConfiguration Configuration { get; }
 
@@ -77,13 +77,10 @@ namespace Pixstock.Service.Web
     /// <param name="app">The application.</param>
     /// <param name="env">The hosting environment</param>
     /// <param name="loggerFactory">ログ</param>
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
-      logger = loggerFactory.CreateLogger<Program>();
-      container.RegisterInstance<ILoggerFactory>(loggerFactory);
-
       InitializeContainer(app);
-      SetupApplication(loggerFactory);
+      SetupApplication();
 
       if (env.IsDevelopment())
       {
@@ -178,7 +175,7 @@ namespace Pixstock.Service.Web
       // See: https://simpleinjector.org/blog/2016/07/
     }
 
-    private void SetupApplication(ILoggerFactory loggerFactory)
+    private void SetupApplication()
     {
       var appConfig = new AppSettings();
       Configuration.Bind("AppSettings", appConfig);
@@ -186,7 +183,7 @@ namespace Pixstock.Service.Web
       var assemblyParameter = new BuildAssemblyParameter(appConfig);
       container.RegisterInstance<IBuildAssemblyParameter>(assemblyParameter);
 
-      var context = new ApplicationContextImpl(assemblyParameter, loggerFactory);
+      var context = new ApplicationContextImpl(assemblyParameter);
       context.SetDiContainer(container);
 
       container.Verify();
@@ -219,7 +216,7 @@ namespace Pixstock.Service.Web
           }
           workspaceRepository.Save();
 
-          logger.LogInformation($"デフォルトワークスペースを作成しました。 Name:{workspace.Name}");
+          _logger.Info($"デフォルトワークスペースを作成しました。 Name:{workspace.Name}");
         }
       }
     }

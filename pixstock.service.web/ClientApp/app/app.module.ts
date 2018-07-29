@@ -13,6 +13,7 @@ import { ExplorerListFragment } from './components/fragment/explorer-list/explor
 import { DeliveryService } from './service/delivery.service';
 import { MessagingService } from './service/messaging.service';
 import { ViewModel } from './viewmodel';
+import { CourierService } from './service/courier.service';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { ViewModel } from './viewmodel';
   ],
   providers: [
     MessagingService,
+    CourierService,
     DeliveryService,
     ViewModel
   ],

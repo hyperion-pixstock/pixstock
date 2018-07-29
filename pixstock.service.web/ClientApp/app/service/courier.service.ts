@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
-import { MessagingService } from "./messaging.service";
 import { IpcUpdatePropResponse, CategoryListUpdateProp, ContentListUpdateProp, PreviewContentProp } from "./contract/response.contract";
 import { ViewModel, ThumbnailListPageItem, ContentListPageItem } from "../viewmodel";
 import { Category } from "../model/category.model";
 import { Content } from "../model/content.model";
+import { BehaviorSubject } from "../../../node_modules/rxjs";
 
 /**
  * クーリエサービス
@@ -12,14 +12,57 @@ import { Content } from "../model/content.model";
 export class CourierService {
   initializedFlag: boolean = false;
 
+  // IPC_INVALIDATEPROPメッセージの内部通知用イベント
+  invalidateProp$ = new BehaviorSubject<IpcUpdatePropResponse>(undefined);
+
+  /**
+   *
+   */
+  private internalIpcUpdatePropResponse: IpcUpdatePropResponse;
+
+  /**
+   * invalidatePropイベントのパラメータを取得する
+   */
+  private get invalidateObject(): IpcUpdatePropResponse { return this.internalIpcUpdatePropResponse; }
+
+  /**
+   * invalidatePropイベントを発火する
+   */
+  private set invalidateObject(response: IpcUpdatePropResponse) {
+    this.invalidateProp$.next(response);
+    this.internalIpcUpdatePropResponse = response;
+  }
+
   /**
    * コンストラクタ
-   *
-   * @param messagingSrv BFF間のメッセージサービス
    */
   constructor(
-    protected messagingSrv: MessagingService,
-    protected viewModel: ViewModel) {
+    protected viewModel: ViewModel
+  ) {
+    // NOTE: 各イベントのsubscribeは、ここで追加する（メンバ化しない）
+
+    this.invalidateProp$.subscribe((response: IpcUpdatePropResponse) => {
+      console.debug("[Pixstock][Messaging][onInvalidateProp] IN");
+      if (response == undefined) return;
+
+      switch (response.PropertyName) {
+        case "CategoryTree":
+          console.debug("[Pixstock][Messaging][onInvalidateProp] CategoryTreeプロパティ更新");
+          break;
+        case "ContentList":
+          let objValue = JSON.parse(response.Value) as ContentListUpdateProp;
+          if (objValue != null) {
+            console.debug("[Pixstock][Messaging][onInvalidateProp] ContentList", this.viewModel);
+            this.updateContentList(objValue);
+          } else {
+            console.warn("プロパティを正常に復号化できませんでした");
+          }
+          break;
+        default:
+          // DEBUG:
+          break;
+      }
+    });
   }
 
   /**
@@ -62,6 +105,20 @@ export class CourierService {
     */
   }
 
+  /**
+   * InvalidateObjectイベントを発火する
+   *
+   * @param eventArgs
+   */
+  fireInvalidateProp(eventArgs: IpcUpdatePropResponse) {
+    this.invalidateObject = eventArgs;
+  }
+
+  /**
+   * ViewModelを更新します
+   *
+   * @param objValue
+   */
   private updateCategoryList(objValue: CategoryListUpdateProp) {
     console.debug("[updateCategoryList] カテゴリ一覧を更新しました");
 
@@ -79,8 +136,13 @@ export class CourierService {
     });
   }
 
+  /**
+   * ViewModelを更新します
+   *
+   * @param objValue
+   */
   private updateContentList(objValue: ContentListUpdateProp) {
-    console.debug("[updateContentList] コンテント一覧を更新しました");
+    console.debug("[updateContentList] コンテント一覧を更新しました", objValue);
 
     this.viewModel.ContentListPageItem = [];
 

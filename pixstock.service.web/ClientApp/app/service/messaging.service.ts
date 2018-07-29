@@ -1,6 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { IpcResponse, IpcUpdateViewResponse, IpcUpdatePropResponse } from './contract/response.contract';
 import { BehaviorSubject } from 'rxjs';
+import { CourierService } from './courier.service';
 
 /**
  * BFFからのIPCメッセージ受信と、内部イベントの発行を行うメッセージングサービスです。
@@ -12,30 +13,13 @@ export class MessagingService {
    */
   ipcRenderer: any;
 
-
-  echo: EventEmitter<string> = new EventEmitter();
-  ShowContentPreview: EventEmitter<string> = new EventEmitter();
-  ShowContentList: EventEmitter<string> = new EventEmitter();
-  UpdateView: EventEmitter<IpcUpdateViewResponse> = new EventEmitter(); // 新API
-  InvalidateProp: EventEmitter<IpcUpdatePropResponse> = new EventEmitter();
-
-
-  // IPC_INVALIDATEPROPメッセージの内部通知用イベント
-  private internalIpcUpdatePropResponse: IpcUpdatePropResponse;
-  invalidateProp$ = new BehaviorSubject<IpcUpdatePropResponse>(undefined);
-
-  get invalidateObject(): IpcUpdatePropResponse { return this.internalIpcUpdatePropResponse; }
-  set invalidateObject(response: IpcUpdatePropResponse) {
-    this.invalidateProp$.next(response);
-    this.internalIpcUpdatePropResponse = response;
-  }
-
+  UpdateView: EventEmitter<IpcUpdateViewResponse> = new EventEmitter();  // TODO: CourierServiceに移動する
 
   /**
    * コンストラクタ
    */
-  constructor() {
-    this.invalidateProp$.subscribe(this.onInvalidateProp);
+  constructor(private courier:CourierService) {
+
   }
 
   /**
@@ -106,16 +90,17 @@ export class MessagingService {
 
   private onMSG_SHOW_CONTENTPREVIEW(event: any, args: any) {
     console.debug("[Pixstock][Messaging][onMSG_SHOW_CONTENTPREVIEW] : Execute");
-    //this.ShowContentPreview.emit(args);
+     // TODO: IPC_UPDATEPROPと同様に、Courierを使用してイベントを発火する
   }
 
   private onMSG_SHOW_CONTENLIST(event: any, args: any) {
     console.debug("[Pixstock][Messaging][onMSG_SHOW_CONTENLIST] : Execute");
-    //this.ShowContentList.emit(args);
+     // TODO: IPC_UPDATEPROPと同様に、Courierを使用してイベントを発火する
   }
 
   private onIPC_ALIVE(event: any, args: any) {
     console.debug("[Pixstock][Messaging][onIPC_ALIVE] : Execute");
+     // TODO: IPC_UPDATEPROPと同様に、Courierを使用してイベントを発火する
   }
 
   private onIPC_UPDATEVIEW(event: any, args: IpcResponse) {
@@ -132,7 +117,7 @@ export class MessagingService {
     //this.logger.debug("[Parameter] ", responseObj.Parameter);
     // -------------
 
-    this.UpdateView.emit(responseObj);
+    this.UpdateView.emit(responseObj); // TODO: IPC_UPDATEPROPと同様に、Courierを使用してイベントを発火する
   }
 
   private onIPC_UPDATEPROP(event: any, args: IpcResponse) {
@@ -140,32 +125,9 @@ export class MessagingService {
 
     // "IPC_UPDATEPROP"メッセージの、本文をインスタンス化する。
     var responseObj = JSON.parse(args.body) as IpcUpdatePropResponse;
-
-    // DUMP
+    // DUMP: JSON文字列からオブジェクトを作成できているか確認用のダンプ出力
     console.debug("[Pixstock][Messaging][onIPC_UPDATEPROP] : Dump Response", responseObj);
 
-    //this.InvalidateProp.emit(responseObj);
-
-    // ↑の代わりに、Rxを使ったイベント購読処理
-    // イベントの購読は、
-    // invalidateProp$.subscribe()で行う
-    this.fireInvalidateProp(responseObj);
-  }
-
-  /*private*/ public fireInvalidateProp(eventArgs: IpcUpdatePropResponse) { // サンプルで手動で呼び出せるように、publicにしている。本来はprivate。
-    this.invalidateObject = eventArgs;
-  }
-
-  onInvalidateProp(response: IpcUpdatePropResponse) {
-    console.debug("[Pixstock][Messaging][onInvalidateProp] IN");
-    if (response == undefined) return;
-
-    switch (response.PropertyName) {
-      case "CategoryTree":
-        console.debug("[Pixstock][Messaging][onInvalidateProp] CategoryTreeプロパティ更新");
-
-        // DEBUG: 
-        break;
-    }
+    this.courier.fireInvalidateProp(responseObj);
   }
 }

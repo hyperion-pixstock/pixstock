@@ -7,24 +7,32 @@ import { Category } from "../../../model/category.model";
 import { IpcUpdatePropResponse } from "../../../service/contract/response.contract";
 import { DeliveryService } from "../../../service/delivery.service";
 import { MessagingService } from "../../../service/messaging.service";
+import { CourierService } from "../../../service/courier.service";
 
 
 /** Flat node with expandable and level information */
 export class DynamicFlatNode {
   /**
    * コンストラクタ
-   * 
+   *
    * @param item
    * @param level
    * @param expandable
    * @param isLoading
    */
   constructor(
+    private delivery: DeliveryService | null,
     public item: Category,
     public level = 1,
     public expandable = false,
-    public isLoading = false)
-  {
+    public isLoading = false) {
+  }
+
+  showContentList() {
+    console.info("ノードボタンをクリック ", this.item.Id);
+    if (this.delivery != null) {
+      this.delivery.updateContentList(this.item.Id);
+    }
   }
 }
 
@@ -33,33 +41,36 @@ export class DynamicFlatNode {
  * the descendants data from the database.
  */
 export class DynamicDatabase {
-    dataMap = new Map<string, string[]>([
-        ['Fruits', ['Apple', 'Orange', 'Banana']],
-        ['Vegetables', ['Tomato', 'Potato', 'Onion']],
-        ['Apple', ['Fuji', 'Macintosh']],
-        ['Onion', ['Yellow', 'White', 'Purple']]
-    ]);
+  dataMap = new Map<string, string[]>([
+    ['Fruits', ['Apple', 'Orange', 'Banana']],
+    ['Vegetables', ['Tomato', 'Potato', 'Onion']],
+    ['Apple', ['Fuji', 'Macintosh']],
+    ['Onion', ['Yellow', 'White', 'Purple']]
+  ]);
 
-    rootLevelNodes: string[] = ['Fruits', 'Vegetables'];
+  rootLevelNodes: string[] = ['Fruits', 'Vegetables'];
 
-    /** Initial data from database */
-    initialData(): DynamicFlatNode[] {
-        return this.rootLevelNodes.map(name => new DynamicFlatNode(
-            {
-                Id: 1,
-                Name: name,
-                HasLinkSubCategoryFlag: true,
-                Labels: []
-            }, 0, true));
-    }
+  /** Initial data from database */
+  initialData(): DynamicFlatNode[] {
+    return this.rootLevelNodes.map(name => new DynamicFlatNode(
+      null,
+      {
+        Id: 1,
+        Name: name,
+        HasLinkSubCategoryFlag: true,
+        Labels: []
+      },
+      0,
+      true));
+  }
 
-    //getChildren(node: Category): Category[] | undefined {
-    //    return this.dataMap.get(node);
-    //}
+  //getChildren(node: Category): Category[] | undefined {
+  //    return this.dataMap.get(node);
+  //}
 
-    isExpandable(node: string): boolean {
-        return this.dataMap.has(node);
-    }
+  isExpandable(node: string): boolean {
+    return this.dataMap.has(node);
+  }
 }
 
 /**
@@ -83,7 +94,7 @@ export class DynamicDataSource {
 
   /**
    * コンストラクタ
-   * 
+   *
    * @param treeControl
    * @param database
    * @param messaging メッセージングサービス
@@ -92,10 +103,10 @@ export class DynamicDataSource {
   constructor(
     private treeControl: FlatTreeControl<DynamicFlatNode>,
     private database: DynamicDatabase,
-    private messaging: MessagingService,
+    private courier: CourierService,
     private delivery: DeliveryService
   ) {
-    this.messaging.invalidateProp$.subscribe(
+    this.courier.invalidateProp$.subscribe(
       (response: IpcUpdatePropResponse) => {
         if (response == undefined) return;
         if (response.PropertyName != "CategoryTree") return;
@@ -112,7 +123,7 @@ export class DynamicDataSource {
 
 
         const nodes = cat.map(prop =>
-          new DynamicFlatNode(prop, node.level + 1, prop.HasLinkSubCategoryFlag));
+          new DynamicFlatNode(delivery, prop, node.level + 1, prop.HasLinkSubCategoryFlag));
         this.data.splice(index + 1, 0, ...nodes);
 
         // notify the change
@@ -145,7 +156,7 @@ export class DynamicDataSource {
 
   /**
    * カテゴリIDからノードを取得する
-   * 
+   *
    * @param categoryId
    */
   getNode(categoryId: number): DynamicFlatNode {
@@ -204,18 +215,18 @@ export class CategoryTreeFragment {
 
   /**
    * コンストラクタ
-   * 
+   *
    * @param database
    * @param messaging
    * @param delivery
    */
   constructor(
     private database: DynamicDatabase,
-    private messaging: MessagingService,
+    private courier: CourierService,
     private delivery: DeliveryService,
   ) {
     this.treeControl = new FlatTreeControl<DynamicFlatNode>(this.getLevel, this.isExpandable);
-    this.dataSource = new DynamicDataSource(this.treeControl, database, messaging, delivery);
+    this.dataSource = new DynamicDataSource(this.treeControl, database, courier, delivery);
 
     this.dataSource.data = database.initialData();
   }

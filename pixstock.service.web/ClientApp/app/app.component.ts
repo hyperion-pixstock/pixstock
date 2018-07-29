@@ -26,7 +26,7 @@ export class AppComponent {
       Hint: "HINT",
       Value: "VALUE"
     };
-    this.messaging.fireInvalidateProp(obj);
+    //this.messaging.fireInvalidateProp(obj); // このデバッグコマンドは無効化しました
   }
 
   /**

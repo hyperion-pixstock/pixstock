@@ -2,6 +2,33 @@
 	"folders": [
 		{
 			"path": "pixstock.service.web"
+		},
+		{
+			"path": "pixstock.common.core"
+		},
+		{
+			"path": "pixstock.common.model"
+		},
+		{
+			"path": "pixstock.service.core"
+		},
+		{
+			"path": "pixstock.service.extention.fullbuild"
+		},
+		{
+			"path": "pixstock.service.extention.sdk"
+		},
+		{
+			"path": "pixstock.service.extention.webscribe"
+		},
+		{
+			"path": "pixstock.service.gateway"
+		},
+		{
+			"path": "pixstock.service.infra"
+		},
+		{
+			"path": "pixstock.service.model"
 		}
 	]
 }

@@ -34,7 +34,6 @@ namespace pixstock.apl.app.core
     public async Task<Func<CancellationToken, Task>> DequeueAsync(
         CancellationToken cancellationToken)
     {
-      mLogger.Debug("[DequeueAsync] IN");
       await _signal.WaitAsync(cancellationToken);
       _workItems.TryDequeue(out var workItem);
 

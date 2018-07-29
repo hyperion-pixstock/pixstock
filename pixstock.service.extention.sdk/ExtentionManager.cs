@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
+using NLog;
 using Pixstock.Service.Infra;
 using Pixstock.Service.Infra.Extention;
 using Pixstock.Service.Infra.Model;
@@ -17,7 +17,7 @@ namespace Pixstock.Nc.Srv.Ext
     /// </summary>
     public class ExtentionManager
     {
-        private static ILogger mLogger;
+        private readonly Logger mLogger;
 
         public readonly Container container;
 
@@ -27,9 +27,9 @@ namespace Pixstock.Nc.Srv.Ext
         /// コンストラクタ
         /// </summary>
         /// <param name="container">DIコンテナ</param>
-        public ExtentionManager(Container container,ILoggerFactory loggerFactory)
+        public ExtentionManager(Container container)
         {
-            mLogger = loggerFactory.CreateLogger<ExtentionManager>();
+            mLogger = LogManager.GetCurrentClassLogger();
 
             this.container = container;
             this.extention_container = new Container();
@@ -51,13 +51,13 @@ namespace Pixstock.Nc.Srv.Ext
                     select Assembly.LoadFile(file.FullName);
                 if (pluginAssemblies.Count() > 0)
                 {
-                    mLogger.LogInformation(LoggingEvents.InitializeApplication, "拡張機能({0})の読み込みを開始します。", pluginDirectory);
+                    mLogger.Info("拡張機能({0})の読み込みを開始します。", pluginDirectory);
                     extention_container.RegisterCollection<IExtentionMetaInfo>(pluginAssemblies);
                 }
             }
             catch (IOException e)
             {
-                mLogger.LogWarning(LoggingEvents.InitializeApplication, e, "拡張機能の読み込みに失敗しました。 ({pluginDirectory})", pluginDirectory);
+                mLogger.Warn(e, "拡張機能の読み込みに失敗しました。 ({pluginDirectory})", pluginDirectory);
             }
         }
 
@@ -103,7 +103,7 @@ namespace Pixstock.Nc.Srv.Ext
             }
             catch (SimpleInjector.ActivationException)
             {
-                mLogger.LogWarning("拡張機能のインターフェース取得に失敗しました。");
+                mLogger.Warn("拡張機能のインターフェース取得に失敗しました。");
             }
         }
 
@@ -130,7 +130,7 @@ namespace Pixstock.Nc.Srv.Ext
 
         private void Execute_INIT(object param)
         {
-            mLogger.LogTrace("INITカットポイントを処理します");
+            mLogger.Trace("INITカットポイントを処理します");
             var ite = container.GetAllInstances<IInitPluginCutpoint>();
             foreach (var prop in ite)
             {
@@ -140,14 +140,14 @@ namespace Pixstock.Nc.Srv.Ext
                 }
                 catch (Exception expr)
                 {
-                    mLogger.LogWarning(expr, "拡張機能の実行でエラーは発生しました。");
+                    mLogger.Warn(expr, "拡張機能の実行でエラーは発生しました。");
                 }
             }
         }
 
         private void Execute_START(object param)
         {
-            mLogger.LogTrace("STARTカットポイントを処理します");
+            mLogger.Trace("STARTカットポイントを処理します");
             var ite = container.GetAllInstances<IStartCutpoint>();
             foreach (var prop in ite)
             {
@@ -157,14 +157,14 @@ namespace Pixstock.Nc.Srv.Ext
                 }
                 catch (Exception expr)
                 {
-                    mLogger.LogWarning(expr, "拡張機能の実行でエラーは発生しました。");
+                    mLogger.Warn(expr, "拡張機能の実行でエラーは発生しました。");
                 }
             }
         }
 
         private void Execute_API_GET_CATEGORY(object param)
         {
-            mLogger.LogTrace("API_GET_CATEGORYカットポイントを処理します");
+            mLogger.Trace("API_GET_CATEGORYカットポイントを処理します");
             var ite = container.GetAllInstances<ICategoryApiCutpoint>();
             foreach (var prop in ite.Select(p => (ICategoryApiCutpoint)p))
             {
@@ -175,7 +175,7 @@ namespace Pixstock.Nc.Srv.Ext
                 }
                 catch (Exception expr)
                 {
-                    mLogger.LogWarning(expr, "拡張機能の実行でエラーは発生しました。");
+                    mLogger.Warn(expr, "拡張機能の実行でエラーは発生しました。");
                 }
             }
         }

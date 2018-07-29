@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { ViewModel } from "../../../viewmodel";
 
 class ExplorerItem {
   constructor(name: string) {
@@ -27,7 +28,7 @@ export class ExplorerListFragment {
     }
   ];
 
-  constructor() {
+  constructor(private viewmodel: ViewModel) {
     this.articles.push(new ExplorerItem("a"));
     this.articles.push(new ExplorerItem("b"));
   }

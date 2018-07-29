@@ -96,6 +96,24 @@ export class DeliveryService {
     this.send(intentMessage);
   }
 
+  /**
+   * コンテント一覧を更新します
+   *
+   * @param categoryId
+   */
+  public updateContentList(categoryId: number) {
+    // ルール: 任意のカテゴリに紐付けられているコンテント一覧を作成します。
+    // TODO: 他のルールも追加する
+    console.info("[Pixstock][Delivery][updateContentList] ", categoryId);
+
+    var intentMessage = new IntentMessage();
+    intentMessage.ServiceType = "Workflow";
+    intentMessage.MessageName = "ACT_REQINVALIDATE_CONTENTLIST";
+    intentMessage.Parameter = JSON.stringify({ContentId:categoryId});
+
+    this.send(intentMessage);
+  }
+
   public executeDebugCommand(command: string) {
     console.info("[Pixstock][Delivery][executeDebugCommand] デバッグコマンドメッセージ送信", command);
     var intentMessage = new IntentMessage();

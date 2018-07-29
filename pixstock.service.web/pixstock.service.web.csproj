@@ -14,12 +14,12 @@
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <EmbeddedResource Include="Assets\Kitting\**\*.txt" />
     <EmbeddedResource Include="Assets\Sql\**\*.txt" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Remove="ClientApp\app\components\fragment\category-tree\category-tree.fragment.ts" />
     <None Remove="ClientApp\app\components\fragment\content-preview\content-preview.fragment.ts" />
@@ -28,6 +28,8 @@
 
   <ItemGroup>
     <PackageReference Include="LiteDB" Version="4.1.4" />
+    <PackageReference Include="NLog" Version="4.5.4" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.1.0" />
@@ -60,5 +62,14 @@
     <TypeScriptCompile Include="ClientApp\app\components\fragment\category-tree\category-tree.fragment.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\fragment\content-preview\content-preview.fragment.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\fragment\explorer-list\explorer-list.fragment.ts" />
+  </ItemGroup>
+
+    <ItemGroup>
+    <Content Update="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="nlog_variable.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

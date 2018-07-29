@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +17,23 @@ namespace Pixstock.Service.Web
     /// <param name="args">The arguments.</param>
     public static void Main(string[] args)
     {
-      BuildWebHost(args).Run();
+      // NLog: setup the logger first to catch all errors
+      var logger = NLog.Web.NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+      try
+      {
+        BuildWebHost(args).Run();
+      }
+      catch (Exception ex)
+      {
+        //NLog: catch setup errors
+        logger.Error(ex, "Stopped program because of exception");
+        throw;
+      }
+      finally
+      {
+        // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
+        NLog.LogManager.Shutdown();
+      }
     }
 
     /// <summary>
@@ -35,9 +52,8 @@ namespace Pixstock.Service.Web
             })
             .ConfigureLogging((hostingContext, logging) =>
             {
-              logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-              logging.AddConsole();
-              logging.AddDebug();
+              logging.ClearProviders();
+              logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
             })
             .UseStartup<Startup>()
             .Build();

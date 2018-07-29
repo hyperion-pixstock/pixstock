@@ -17,9 +17,15 @@ public class CLS_DashboardBase : States {}
 public class CLS_CategoryList : States {}
 public class CLS_CategoryListBase : States {}
 public class CLS_Preview : States {}
+public class CLS_RESPONSE_GETCATEGORY : Events {}
+public class CLS_RESPONSE_GETCATEGORYCONTENT : Events {}
 public class CLS_ACT_DEBUGCOMMAND : Events {}
 public class CLS_ACT_REQINVALIDATE_CATEGORYTREE : Events {}
 public class CLS_ACT_RESINVALIDATE_CATEGORYTREE : Events {}
+public class CLS_ACT_REQINVALIDATE_CONTENTLIST : Events {}
+public class CLS_ACT_RESINVALIDATE_CONTENTLIST : Events {}
+public class CLS_ACT_REQINVALIDATE_PREVIEW : Events {}
+public class CLS_ACT_RESINVALIDATE_CONTENT : Events {}
 public class CLS_CategorySelectBtnClick : Events {}
 public class CLS_ACT_ContinueCategoryList : Events {}
 public class CLS_ACT_UpperCategoryList : Events {}
@@ -59,9 +65,15 @@ public partial class Events : WorkflowEventBase {
 
             return cacheEventsDict[name];
         }
+	public static CLS_RESPONSE_GETCATEGORY RESPONSE_GETCATEGORY { get; } = new CLS_RESPONSE_GETCATEGORY();
+	public static CLS_RESPONSE_GETCATEGORYCONTENT RESPONSE_GETCATEGORYCONTENT { get; } = new CLS_RESPONSE_GETCATEGORYCONTENT();
 	public static CLS_ACT_DEBUGCOMMAND ACT_DEBUGCOMMAND { get; } = new CLS_ACT_DEBUGCOMMAND();
 	public static CLS_ACT_REQINVALIDATE_CATEGORYTREE ACT_REQINVALIDATE_CATEGORYTREE { get; } = new CLS_ACT_REQINVALIDATE_CATEGORYTREE();
 	public static CLS_ACT_RESINVALIDATE_CATEGORYTREE ACT_RESINVALIDATE_CATEGORYTREE { get; } = new CLS_ACT_RESINVALIDATE_CATEGORYTREE();
+	public static CLS_ACT_REQINVALIDATE_CONTENTLIST ACT_REQINVALIDATE_CONTENTLIST { get; } = new CLS_ACT_REQINVALIDATE_CONTENTLIST();
+	public static CLS_ACT_RESINVALIDATE_CONTENTLIST ACT_RESINVALIDATE_CONTENTLIST { get; } = new CLS_ACT_RESINVALIDATE_CONTENTLIST();
+	public static CLS_ACT_REQINVALIDATE_PREVIEW ACT_REQINVALIDATE_PREVIEW { get; } = new CLS_ACT_REQINVALIDATE_PREVIEW();
+	public static CLS_ACT_RESINVALIDATE_CONTENT ACT_RESINVALIDATE_CONTENT { get; } = new CLS_ACT_RESINVALIDATE_CONTENT();
 	public static CLS_CategorySelectBtnClick CategorySelectBtnClick { get; } = new CLS_CategorySelectBtnClick();
 	public static CLS_ACT_ContinueCategoryList ACT_ContinueCategoryList { get; } = new CLS_ACT_ContinueCategoryList();
 	public static CLS_ACT_UpperCategoryList ACT_UpperCategoryList { get; } = new CLS_ACT_UpperCategoryList();

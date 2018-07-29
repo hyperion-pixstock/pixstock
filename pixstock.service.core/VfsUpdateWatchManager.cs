@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using NLog;
 using Pixstock.Service.Core.Structure;
 using Pixstock.Service.Core.Vfs;
 using Pixstock.Service.Infra;
@@ -57,7 +58,7 @@ namespace Pixstock.Service.Core
   public class RecentInfo
   {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public WatcherChangeTypes EventType { get; set; }
 
@@ -72,7 +73,7 @@ namespace Pixstock.Service.Core
   /// </summary>
   public class VspFileUpdateWatchManager
   {
-    private readonly ILogger LOG;
+    private readonly Logger LOG;
 
     readonly Container container;
 
@@ -146,9 +147,9 @@ namespace Pixstock.Service.Core
     /// コンストラクタ
     /// </summary>
     /// <param name="container"></param>
-    public VspFileUpdateWatchManager(Container container,ILoggerFactory loggerFactory)
+    public VspFileUpdateWatchManager(Container container)
     {
-      this.LOG = loggerFactory.CreateLogger<VspFileUpdateWatchManager>();
+      this.LOG = LogManager.GetCurrentClassLogger();
       this.container = container;
 
       //this._CpuCounter = RuntimePerformanceUtility.CreateCpuCounter();
@@ -231,11 +232,11 @@ namespace Pixstock.Service.Core
       {
         _Watcher.Path = _Workspace.VirtualPath;
         _Watcher.EnableRaisingEvents = true;
-        LOG.LogInformation(LoggingEvents.VfsCommon, "[{0}]のファイル監視を開始します", _Watcher.Path);
+        LOG.Info("[{0}]のファイル監視を開始します", _Watcher.Path);
       }
       catch (Exception expr)
       {
-        LOG.LogWarning(LoggingEvents.VfsCommon, "ファイルシステムの監視に失敗しました\n{0}", expr.Message);
+        LOG.Warn("ファイルシステムの監視に失敗しました\n{0}", expr.Message);
       }
     }
 
@@ -260,7 +261,7 @@ namespace Pixstock.Service.Core
       var timer = sender as System.Timers.Timer;
       timer.Enabled = false;
 
-      LOG.LogInformation(LoggingEvents.VfsCommon, "タイマー処理の実行");
+      LOG.Info("タイマー処理の実行");
 
       // ディレクトリ削除イベントが発生している場合、
       // 削除したディレクトリに含まれていたファイルを、削除したパスから見つけ出して削除処理を行うキューに追加する
@@ -284,7 +285,7 @@ namespace Pixstock.Service.Core
         }
       }
 
-      // 
+      //
       foreach (var @pair in _UpdatesWatchFiles.ToList())
       {
         // 最後のファイル監視状態から、一定時間経過している場合のみ処理を行う。
@@ -298,7 +299,7 @@ namespace Pixstock.Service.Core
             var @lastItem = item.Recents.LastOrDefault();
 
             // NOTE: UpdateVirtualSpaceFlowワークフローを呼び出す
-            LOG.LogInformation(LoggingEvents.VfsCommon, "ワークフロー実行 [{1}] 対象ファイルパス={0}", item.Target.FullName, @lastItem.EventType);
+            LOG.Info("ワークフロー実行 [{1}] 対象ファイルパス={0}", item.Target.FullName, @lastItem.EventType);
 
             // ワークフロー処理中に発生するファイル更新イベントにより、更新キューに項目が追加されてしまうことを防ぐため、
             // 処理中のファイルを更新キューから除外するための除外リストに、処理中のファイルを追加する。
@@ -357,14 +358,14 @@ namespace Pixstock.Service.Core
                   }
                   else
                   {
-                    LOG.LogInformation(LoggingEvents.VfsCommon, "「{0}」は存在しない物理ファイルのため、処理をスキップします。", item.Target.FullName);
+                    LOG.Info("「{0}」は存在しない物理ファイルのため、処理をスキップします。", item.Target.FullName);
                   }
                 }
               }
             }
             catch (Exception expr)
             {
-              LOG.LogError(LoggingEvents.VfsCommon, "タイマー処理時エラー = {0}", expr.Message);
+              LOG.Error("タイマー処理時エラー = {0}", expr.Message);
             }
 
             // 処理を終了したファイルを、除外リストから削除します
@@ -402,14 +403,14 @@ namespace Pixstock.Service.Core
       _IndexQueueTimer.Stop();
       try
       {
-        LOG.LogInformation(LoggingEvents.VfsCommon, "OnWatcherChanged  FullPath:{0}", e.FullPath);
+        LOG.Info("OnWatcherChanged  FullPath:{0}", e.FullPath);
 
         // eを手放してイベントの呼び出し元に返すために、e.FullPathからFileInfoを作成し、
         // 以降はFileInfoを使用して処理を進めるところがキモ。
         FileInfo fileInfo = new FileInfo(e.FullPath);
         if (_IgnoreUpdateFiles.Contains(fileInfo.FullName))
         {
-          LOG.LogInformation(LoggingEvents.VfsCommon, "{0}は除外リストに含まれるため、イベントコレクションには追加しない", fileInfo.FullName);
+          LOG.Info("{0}は除外リストに含まれるため、イベントコレクションには追加しない", fileInfo.FullName);
           return;
         }
 
@@ -449,7 +450,7 @@ namespace Pixstock.Service.Core
       try
       {
 
-        LOG.LogInformation(LoggingEvents.VfsCommon, "OnWatcherCreated  FullPath:{0}", e.FullPath);
+        LOG.Info("OnWatcherCreated  FullPath:{0}", e.FullPath);
 
         // FS更新イベント対象別処理：ファイル or ディレクトリ
         if (File.Exists(e.FullPath))
@@ -459,12 +460,12 @@ namespace Pixstock.Service.Core
           FileInfo fileInfo = new FileInfo(e.FullPath);
           if (_IgnoreUpdateFiles.Contains(fileInfo.FullName))
           {
-            LOG.LogInformation(LoggingEvents.VfsCommon, "{0}は除外リストに含まれるため、イベントコレクションには追加しない", fileInfo.FullName);
+            LOG.Info("{0}は除外リストに含まれるため、イベントコレクションには追加しない", fileInfo.FullName);
             return;
           }
 
 
-          if (!fileInfo.Exists) LOG.LogDebug(LoggingEvents.VfsCommon, "\tパス「{0}」が処理前に消滅しました", e.FullPath);
+          if (!fileInfo.Exists) LOG.Debug("\tパス「{0}」が処理前に消滅しました", e.FullPath);
 
           // システムファイルに対しては処理を行わない。
           if ((fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
@@ -481,19 +482,19 @@ namespace Pixstock.Service.Core
           var directoryInfo = new DirectoryInfo(e.FullPath);
           if (_IgnoreUpdateFiles.Contains(directoryInfo.FullName))
           {
-            LOG.LogInformation(LoggingEvents.VfsCommon, "{0}は除外リストに含まれるため、イベントコレクションには追加しない", directoryInfo.FullName);
+            LOG.Info("{0}は除外リストに含まれるため、イベントコレクションには追加しない", directoryInfo.FullName);
             return;
           }
 
 
-          if (!directoryInfo.Exists) LOG.LogInformation(LoggingEvents.VfsCommon, "\tパス「{0}」が処理前に消滅しました", e.FullPath);
+          if (!directoryInfo.Exists) LOG.Info( "\tパス「{0}」が処理前に消滅しました", e.FullPath);
           lock (sameDirectoryOperation_Locker)
           {
             // ディレクトリ移動操作であるかチェックする
             var dir = new DirectoryInfo(e.Name);
             if (sameDirectoryOperation_Name == dir.Name)
             {
-              LOG.LogInformation(LoggingEvents.VfsCommon, "ディレクトリ移動操作として処理します");
+              LOG.Info("ディレクトリ移動操作として処理します");
               sameDirectoryOperation_Name = "";
             }
           }
@@ -539,12 +540,12 @@ namespace Pixstock.Service.Core
         //           FileInfoを取得できません。
         //           また、ディレクトリの削除の場合、ディレクトリ内のファイル一覧を取得できません。
 
-        LOG.LogInformation(LoggingEvents.VfsCommon, "OnWatcherDeleted  FullPath:{0}", e.FullPath);
+        LOG.Info("OnWatcherDeleted  FullPath:{0}", e.FullPath);
 
         FileInfo fileInfo = new FileInfo(e.FullPath);
         if (_IgnoreUpdateFiles.Contains(fileInfo.FullName))
         {
-          LOG.LogInformation(LoggingEvents.VfsCommon, "{0}は除外リストに含まれるため、イベントコレクションには追加しない", fileInfo.FullName);
+          LOG.Info("{0}は除外リストに含まれるため、イベントコレクションには追加しない", fileInfo.FullName);
           return;
         }
 
@@ -584,14 +585,14 @@ namespace Pixstock.Service.Core
       _IndexQueueTimer.Stop();
       try
       {
-        LOG.LogInformation(LoggingEvents.VfsCommon, "OnWatcherRenamed\n  FullPath:{0}\n   OldPath:{1}", e.FullPath, e.OldFullPath);
+        LOG.Info("OnWatcherRenamed\n  FullPath:{0}\n   OldPath:{1}", e.FullPath, e.OldFullPath);
 
         // eを手放してイベントの呼び出し元に返すために、e.FullPathからFileInfoを作成し、
         // 以降はFileInfoを使用して処理を進めるところがキモ。
         FileInfo fileInfo = new FileInfo(e.FullPath);
         if (_IgnoreUpdateFiles.Contains(fileInfo.FullName))
         {
-          LOG.LogInformation(LoggingEvents.VfsCommon, "{0}は除外リストに含まれるため、イベントコレクションには追加しない", fileInfo.FullName);
+          LOG.Info("{0}は除外リストに含まれるため、イベントコレクションには追加しない", fileInfo.FullName);
           return;
         }
 

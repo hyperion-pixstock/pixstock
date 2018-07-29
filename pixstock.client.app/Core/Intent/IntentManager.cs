@@ -4,10 +4,8 @@ using System.Threading.Tasks;
 using NLog;
 using pixstock.apl.app.core.Infra;
 
-namespace pixstock.apl.app.core.Intent
-{
-  public class IntentManager : IIntentManager
-  {
+namespace pixstock.apl.app.core.Intent {
+  public class IntentManager : IIntentManager {
     private readonly ILogger mLogger;
 
     readonly IBackgroundTaskQueue mBackgroundTaskQueue;
@@ -18,25 +16,26 @@ namespace pixstock.apl.app.core.Intent
     ///コンストラクタ
     /// </summary>
     /// <param name="queue"></param>
-    public IntentManager(IBackgroundTaskQueue queue, IServiceDistoributor distributor)
-    {
+    public IntentManager (IBackgroundTaskQueue queue, IServiceDistoributor distributor) {
       this.mBackgroundTaskQueue = queue;
       this.mServiceDistoributor = distributor;
-      this.mLogger = LogManager.GetCurrentClassLogger();
+      this.mLogger = LogManager.GetCurrentClassLogger ();
     }
 
-    public void AddIntent(ServiceType service, string intentName, object parameter)
-    {
-      mBackgroundTaskQueue.QueueBackgroundWorkItem(ExecuteItem);
+    public void AddIntent (ServiceType service, string intentName) {
+      AddIntent (service, intentName, null);
+    }
 
-      async Task ExecuteItem(CancellationToken token)
-      {
-        this.mLogger.Debug("[ExecuteItem] IntentName={IntentName}", intentName);
+    public void AddIntent (ServiceType service, string intentName, object parameter) {
+      mBackgroundTaskQueue.QueueBackgroundWorkItem (ExecuteItem);
+
+      async Task ExecuteItem (CancellationToken token) {
+        this.mLogger.Debug ("[ExecuteItem] IntentName={IntentName}", intentName);
 
         //await Task.Delay(TimeSpan.FromSeconds(5), token); //デバッグ用のウェイト
 
         // Distributorの呼び出し
-        mServiceDistoributor.ExecuteService(service, intentName, parameter);
+        mServiceDistoributor.ExecuteService (service, intentName, parameter);
       }
     }
   }
