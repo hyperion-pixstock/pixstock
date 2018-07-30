@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { IpcUpdatePropResponse, CategoryListUpdateProp, ContentListUpdateProp, PreviewContentProp } from "./contract/response.contract";
+import { IpcUpdatePropResponse, CategoryListUpdateProp, PreviewContentProp } from "./contract/response.contract";
 import { ViewModel, ThumbnailListPageItem, ContentListPageItem } from "../viewmodel";
 import { Category } from "../model/category.model";
 import { Content } from "../model/content.model";
@@ -50,7 +50,7 @@ export class CourierService {
           console.debug("[Pixstock][Messaging][onInvalidateProp] CategoryTreeプロパティ更新");
           break;
         case "ContentList":
-          let objValue = JSON.parse(response.Value) as ContentListUpdateProp;
+          let objValue = JSON.parse(response.Value) as Content[];
           if (objValue != null) {
             console.debug("[Pixstock][Messaging][onInvalidateProp] ContentList", this.viewModel);
             this.updateContentList(objValue);
@@ -141,12 +141,12 @@ export class CourierService {
    *
    * @param objValue
    */
-  private updateContentList(objValue: ContentListUpdateProp) {
+  private updateContentList(objValue: Content[]) {
     console.debug("[updateContentList] コンテント一覧を更新しました", objValue);
 
     this.viewModel.ContentListPageItem = [];
 
-    objValue.ContentList.forEach((inprop: Content) => {
+    objValue.forEach((inprop: Content) => {
       let listitem = {} as ContentListPageItem;
       listitem.Content = inprop;
 

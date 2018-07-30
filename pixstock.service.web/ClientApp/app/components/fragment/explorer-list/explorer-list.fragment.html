@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-1" *ngFor="let article of articles">
+  <div class="col-1" *ngFor="let article of viewmodel.ContentListPageItem">
     <!-- Card -->
     <div class="card" style="margin-bottom:10px">
       <!-- Card image -->
@@ -7,7 +7,7 @@
       <!-- Card content -->
       <div class="card-body">
         <!-- Title -->
-        <h6 class="card-title"><a (click)="article.aaa()">{{article.name}}</a></h6>
+        <h6 class="card-title"><a (click)="article.aaa()">{{article.Content.Name}}</a></h6>
       </div>
     </div>
     <!-- Card -->

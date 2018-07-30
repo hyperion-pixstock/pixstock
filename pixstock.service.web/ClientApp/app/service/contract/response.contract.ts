@@ -37,13 +37,6 @@ export interface CategoryListUpdateProp {
 /**
  *
  */
-export interface ContentListUpdateProp {
-    ContentList: Content[];
-}
-
-/**
- *
- */
 export interface PreviewContentProp {
     Content: Content;
     Category: Category;
