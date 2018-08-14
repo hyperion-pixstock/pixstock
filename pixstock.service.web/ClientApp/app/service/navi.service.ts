@@ -1,66 +1,53 @@
 import { Injectable } from "@angular/core";
-import { MessagingService } from "./messaging.service";
 import { IpcUpdateViewResponse } from "./contract/response.contract";
-import { Router } from "@angular/router";
+import { CourierService } from "./courier.service";
+import { ViewModel } from "../viewmodel";
 
 @Injectable()
 export class NaviService {
+  private LOGEVENT: string = "[Pixstock][NaviService]";
+
   /**
    * コンストラクタ
-   * 
-   * @param logger
-   * @param messagingSrv
+   *
+   * @param courierSrv
+   * @param viewModel
    */
   constructor(
-    protected messagingSrv: MessagingService,
-    protected router: Router
+    private courierSrv: CourierService,
+    private viewModel: ViewModel
   ) {
+    this.courierSrv.updateView$.subscribe((response: IpcUpdateViewResponse) => {
+      if (response == undefined) return;
 
-  }
+      console.debug(this.LOGEVENT, "[UpdateView$] - IN");
+      console.debug(this.LOGEVENT, "[UpdateView$] レスポンス:", response);
 
+      let lastPos = response.UpdateList.length;
+      let screenName = response.UpdateList[lastPos - 1].ScreenName;
+      console.debug(this.LOGEVENT, "[UpdateView$] ScrrenName:", screenName);
 
-  /**
-   * 初期化メソッド
-   */
-  public initialize() {
-    this.messagingSrv.UpdateView.subscribe((prop: IpcUpdateViewResponse) => {
-      prop.UpdateList.forEach(item => {
-        console.info("[Pixstock][Navi][UpdateView] Navigation", item, prop.Parameter);
-        // var navCtrl = this.app.getActiveNav();// ftom ionic
-        /*
-        // デバッグ用
-        if (prop.Parameter.toString() == "TRNS_DEBUG_BACK") {
-            navCtrl.setRoot("HomePage");
-            return;
-        }
+      switch (screenName) {
+        case "Dashboard":
+          this.viewModel.screenStatus.showDashboard();
+          break;
+        case "Finder":
+          this.viewModel.screenStatus.showFinder();
+          break;
+        case "Preview":
+          this.viewModel.screenStatus.showPreview({});
+          break;
+        case "ContentListPreview":
+          this.viewModel.screenStatus.showPreview({
+            Position: parseInt(String(response.Parameter))
+          });
+          break;
+        default:
+          console.warn(this.LOGEVENT, "[UpdateView$] 未定義の画面名", screenName);
+          break;
+      }
 
-        if (item.UpdateType == "PUSH") {
-            navCtrl.push(item.ScreenName, prop.Parameter); // AppModuleのDeepLinksで設定したスクリーン名を指定する
-        } else if (item.UpdateType == "POP") {
-            navCtrl.pop();
-        } else if (item.UpdateType == "SET") {
-            navCtrl.setRoot(item.ScreenName, prop.Parameter);
-        }
-        */
-
-        // 複数の遷移アイテムが登録されている場合は、
-        // ルーティング処理を複数回呼び出す。
-        if (item.UpdateType == "PUSH") {
-          this.routing(item.ScreenName, prop.Parameter);
-        } else if (item.UpdateType == "SET") {
-          this.routing(item.ScreenName, prop.Parameter);
-        }
-      });
+      console.debug(this.LOGEVENT, "[UpdateView$] - OUT");
     });
-  }
-
-  /**
-   * Angularのルーティング処理
-   * 
-   * @param screenName ルーティング先スクリーン名（app.shared.module.tsで登録したパスを指定する）
-   * @param param
-   */
-  private routing(screenName: string, param: any) {
-    this.router.navigate(['/' + screenName], { queryParams: param });
   }
 }

@@ -2,19 +2,19 @@ import { Content } from "../../model/content.model";
 import { Category } from "../../model/category.model";
 
 export interface IpcResponse {
-    body: string;
+  body: string;
 }
 
 
 export interface CategoryDetailResponse {
-    Category: Category;
-    SubCategory: Category[];
-    Content: Content[];
+  Category: Category;
+  SubCategory: Category[];
+  Content: Content[];
 }
 
 export interface ContentDetailResponse {
-    Content: Content;
-    Category: Category;
+  Content: Content;
+  Category: Category;
 }
 
 
@@ -31,23 +31,29 @@ export interface IpcUpdatePropResponse {
  * PropertyNameがCategoryList
  */
 export interface CategoryListUpdateProp {
-    CategoryList: Category[];
+  CategoryList: Category[];
 }
 
 /**
  *
  */
 export interface PreviewContentProp {
-    Content: Content;
-    Category: Category;
+  Content: Content;
+  Category: Category;
 }
 
+/**
+ * "IPC_UPDATEVIEW"メッセージの本文
+ */
 export interface IpcUpdateViewResponse {
-    UpdateList: UpdateViewRequestItem[];
-    Parameter: object;
+  /** 表示更新リスト */
+  UpdateList: UpdateViewRequestItem[];
+
+  /** パラメータ */
+  Parameter: object;
 }
 
 export interface UpdateViewRequestItem {
-    ScreenName: string;
-    UpdateType: string;
+  ScreenName: string;
+  UpdateType: string;
 }

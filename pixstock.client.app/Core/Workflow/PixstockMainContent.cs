@@ -44,7 +44,7 @@ namespace pixstock.apl.app.Workflow
       }
       catch (Exception expr)
       {
-        mLogger.Error("[FireWorkflowEvent] Event Not Found (EventName={EventName}).", workflowEvent);
+        mLogger.Error(expr, "[FireWorkflowEvent] Event Not Found (EventName={EventName}).", workflowEvent);
       }
     }
 
@@ -78,7 +78,6 @@ namespace pixstock.apl.app.Workflow
     {
       try
       {
-        // this.mLogger.LogDebug(LoggingEvents.Undefine, "[PixstockMainContent][OnInvokeHideFrame] - IN");
         // ScreenManagerを呼び出して、非表示処理を行う
         this.ScreenManager.HideScreen(args.FrameName);
       }

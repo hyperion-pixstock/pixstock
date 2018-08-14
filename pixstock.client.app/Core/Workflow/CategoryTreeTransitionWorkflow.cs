@@ -279,11 +279,6 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions {
       intentManager.AddIntent (ServiceType.Server, "CategoryTreeLoad", tgtCategoryId);
     }
 
-    const int PREVIEWOPERATION_CONTENT = 1;
-    const int PREVIEWOPERATION_CONTENTLISTPOS = 2;
-    const int PREVIEWOPERATION_CONTENTLIST_NEXT = 3;
-    const int PREVIEWOPERATION_CONTENTLIST_PREV = 4;
-
     /// <summary>
     /// プレビューコンテント更新要求
     /// </summary>
@@ -291,8 +286,40 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions {
     /// <returns></returns>
     async Task OnACT_REQINVALIDATE_PREVIEW (object param) {
       this.mLogger.Debug ("IN - {@Param}", param);
-      ReqInvalidatePreviewParameter paramObject = (ReqInvalidatePreviewParameter) param;
 
+      var memCache = mContainer.GetInstance<IMemoryCache> ();
+      var intentManager = mContainer.GetInstance<IIntentManager> ();
+
+      ReqInvalidatePreviewParameter paramObject = new ReqInvalidatePreviewParameter ();
+      JsonConvert.PopulateObject (param.ToString (), paramObject);
+
+      try {
+        switch (paramObject.Operation) {
+          case "NavigationPosition":
+            ContentListParam objContentList;
+            if (memCache.TryGetValue ("ContentList", out objContentList)) {
+              // コンテント一覧の項目位置(ReqInvalidatePreviewParameter.Position)にあるコンテント情報を読み込む
+              var content = objContentList.ContentList[paramObject.Position];
+              intentManager.AddIntent (ServiceType.Server, "ContentPreview", new ContentPreviewHandler.HandlerParameter { ContentId = content.Id });
+            } else {
+              throw new ApplicationException ("キャッシュからコンテント一覧を取得できませんでした。");
+            }
+            break;
+          case "NavigationNext":
+            // TODO: 未実装
+          case "NavigationPrev":
+            // TODO: 未実装
+          case "Content":
+            // TODO: 未実装
+          default:
+            this.mLogger.Warn ("処理できないオペレーション名({@Operation})です", paramObject.Operation);
+            break;
+        }
+      } catch (Exception expr) {
+        this.mLogger.Error (expr);
+      }
+
+      this.mLogger.Debug ("OUT");
     }
 
     /// <summary>
@@ -332,7 +359,7 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions {
       // TODO: ルールの保存／既存ルールの読み込み
 
       var intentParam = new LoadContentListByCategoryHandler.HandlerParameter ();
-      if(paramObject.ContentId.HasValue)
+      if (paramObject.ContentId.HasValue)
         intentParam.CategoryId = paramObject.ContentId.Value;
 
       var intentManager = mContainer.GetInstance<IIntentManager> ();

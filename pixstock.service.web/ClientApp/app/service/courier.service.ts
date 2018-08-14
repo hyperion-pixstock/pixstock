@@ -1,24 +1,33 @@
 import { Injectable } from "@angular/core";
-import { IpcUpdatePropResponse, CategoryListUpdateProp, PreviewContentProp } from "./contract/response.contract";
+import { IpcUpdatePropResponse, CategoryListUpdateProp, PreviewContentProp, IpcUpdateViewResponse } from "./contract/response.contract";
 import { ViewModel, ThumbnailListPageItem, ContentListPageItem } from "../viewmodel";
 import { Category } from "../model/category.model";
 import { Content } from "../model/content.model";
 import { BehaviorSubject } from "../../../node_modules/rxjs";
+import { DomSanitizer } from "@angular/platform-browser";
 
 /**
  * クーリエサービス
  */
 @Injectable()
 export class CourierService {
-  initializedFlag: boolean = false;
+  private LOGEVENT: string = "[Pixstock][CourierService]";
 
-  // IPC_INVALIDATEPROPメッセージの内部通知用イベント
+  /**
+   *  IPC_INVALIDATEPROPメッセージの内部通知用イベント
+   */
   invalidateProp$ = new BehaviorSubject<IpcUpdatePropResponse>(undefined);
 
   /**
-   *
+   * IPC_UPDATEVIEWメッセージの内部通知用イベント
    */
+  updateView$ = new BehaviorSubject<IpcUpdateViewResponse>(undefined);
+
+  /** */
   private internalIpcUpdatePropResponse: IpcUpdatePropResponse;
+
+  /** */
+  private internalIpcUpdateViewResponse: IpcUpdateViewResponse;
 
   /**
    * invalidatePropイベントのパラメータを取得する
@@ -33,76 +42,47 @@ export class CourierService {
     this.internalIpcUpdatePropResponse = response;
   }
 
+  private get updateView(): IpcUpdateViewResponse { return this.internalIpcUpdateViewResponse; }
+
+  private set updateView(response: IpcUpdateViewResponse) {
+    this.updateView$.next(response);
+    this.internalIpcUpdateViewResponse = response;
+  }
+
   /**
    * コンストラクタ
    */
   constructor(
-    protected viewModel: ViewModel
+    private viewModel: ViewModel,
+    private sanitizer: DomSanitizer
   ) {
     // NOTE: 各イベントのsubscribeは、ここで追加する（メンバ化しない）
 
     this.invalidateProp$.subscribe((response: IpcUpdatePropResponse) => {
-      console.debug("[Pixstock][Messaging][onInvalidateProp] IN");
+      console.debug(this.LOGEVENT, "[onInvalidateProp] IN");
       if (response == undefined) return;
 
       switch (response.PropertyName) {
         case "CategoryTree":
-          console.debug("[Pixstock][Messaging][onInvalidateProp] CategoryTreeプロパティ更新");
+          console.debug(this.LOGEVENT, "[onInvalidateProp] CategoryTreeプロパティ更新");
           break;
         case "ContentList":
-          let objValue = JSON.parse(response.Value) as Content[];
+          console.debug(this.LOGEVENT, "[onInvalidateProp] ContentList");
+          let objValue = JSON.parse(response.Value) as ContentListParam;
           if (objValue != null) {
-            console.debug("[Pixstock][Messaging][onInvalidateProp] ContentList", this.viewModel);
             this.updateContentList(objValue);
           } else {
             console.warn("プロパティを正常に復号化できませんでした");
           }
           break;
+        case "PreviewUrl":
+          this.previewUrl(response);
+          break;
         default:
-          // DEBUG:
+          console.warn(this.LOGEVENT, "[invalidateProp$] 処理できないプロパティ名", response.PropertyName);
           break;
       }
     });
-  }
-
-  /**
-   * 初期化
-   */
-  public initialize() {
-    if (this.initializedFlag) return;
-    this.initializedFlag = true;
-    /*
-    this.messagingSrv.UpdateProp.subscribe((prop: IpcUpdatePropResponse) => {
-      console.info("[Pixstock][Courier][UpdateProp.subscribe] レジスタ更新 レジスタ名=" + prop.PropertyName, prop.Value);
-
-      if (prop.PropertyName == "CategoryList") {
-        let objValue = JSON.parse(prop.Value) as CategoryListUpdateProp;
-        if (objValue != null) {
-          this.updateCategoryList(objValue);
-        } else {
-          console.warn("プロパティを正常に復号化できませんでした");
-        }
-        this.viewModel.CategoryListLazyLoadSpinner = false;
-      } else if (prop.PropertyName == "ContentList") {
-        let objValue = JSON.parse(prop.Value) as ContentListUpdateProp;
-        if (objValue != null) {
-          this.updateContentList(objValue);
-        } else {
-          console.warn("プロパティを正常に復号化できませんでした");
-        }
-      } else if (prop.PropertyName == "PreviewContent") {
-        let objValue = JSON.parse(prop.Value) as PreviewContentProp;
-        if (objValue != null) {
-          this.viewModel.PreviewContent = objValue.Content;
-          this.viewModel.PreviewCategory = objValue.Category;
-        } else {
-          console.warn("プロパティを正常に復号化できませんでした");
-        }
-      }
-
-      // TODO: ここに、各プロパティ名の処理を追加します
-    });
-    */
   }
 
   /**
@@ -115,12 +95,21 @@ export class CourierService {
   }
 
   /**
+   * UpdateViewイベントを発火します
+   *
+   * @param eventArgs
+   */
+  fireUpdateView(eventArgs: IpcUpdateViewResponse) {
+    this.updateView = eventArgs;
+  }
+
+  /**
    * ViewModelを更新します
    *
    * @param objValue
    */
   private updateCategoryList(objValue: CategoryListUpdateProp) {
-    console.debug("[updateCategoryList] カテゴリ一覧を更新しました");
+    console.debug(this.LOGEVENT, "[updateCategoryList] カテゴリ一覧を更新しました");
 
     objValue.CategoryList.forEach((inprop: Category) => {
       let listitem = {} as ThumbnailListPageItem;
@@ -141,16 +130,35 @@ export class CourierService {
    *
    * @param objValue
    */
-  private updateContentList(objValue: Content[]) {
-    console.debug("[updateContentList] コンテント一覧を更新しました", objValue);
+  private updateContentList(objValue: ContentListParam) {
+    console.debug(this.LOGEVENT, "[updateContentList] コンテント一覧を更新しました", objValue);
 
     this.viewModel.ContentListPageItem = [];
 
-    objValue.forEach((inprop: Content) => {
+    objValue.ContentList.forEach((inprop: Content) => {
       let listitem = {} as ContentListPageItem;
+      listitem.ThumbnailUrl = inprop.ThumbnailImageSrcUrl;
       listitem.Content = inprop;
 
       this.viewModel.ContentListPageItem.push(listitem);
     });
   }
+
+  /**
+   * PreviewUrlプロパティの更新
+   * @param response
+   */
+  private previewUrl(response: IpcUpdatePropResponse) {
+    let objValue = JSON.parse(response.Value) as string;
+    this.viewModel.PreviewUrl = this.sanitizer.bypassSecurityTrustUrl(objValue);
+  }
+
+}
+
+/**
+ * プロパティデータ更新メッセージによるContentList更新で受け取るパラメータ
+ */
+interface ContentListParam {
+  Category: Category | null;
+  ContentList: Content[];
 }

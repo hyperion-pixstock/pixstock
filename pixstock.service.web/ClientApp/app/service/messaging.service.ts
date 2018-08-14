@@ -8,17 +8,17 @@ import { CourierService } from './courier.service';
  */
 @Injectable()
 export class MessagingService {
+  private LOGEVENT: string = "[Pixstock][MessagingService]";
+
   /**
    * ElectronNETのRendererで使用するIPCオブジェクト
    */
   ipcRenderer: any;
 
-  UpdateView: EventEmitter<IpcUpdateViewResponse> = new EventEmitter();  // TODO: CourierServiceに移動する
-
   /**
    * コンストラクタ
    */
-  constructor(private courier:CourierService) {
+  constructor(private courier: CourierService) {
 
   }
 
@@ -89,45 +89,33 @@ export class MessagingService {
   }
 
   private onMSG_SHOW_CONTENTPREVIEW(event: any, args: any) {
-    console.debug("[Pixstock][Messaging][onMSG_SHOW_CONTENTPREVIEW] : Execute");
-     // TODO: IPC_UPDATEPROPと同様に、Courierを使用してイベントを発火する
+    console.debug(this.LOGEVENT, "[onMSG_SHOW_CONTENTPREVIEW] : Execute");
+    // TODO: IPC_UPDATEPROPと同様に、Courierを使用してイベントを発火する
   }
 
   private onMSG_SHOW_CONTENLIST(event: any, args: any) {
-    console.debug("[Pixstock][Messaging][onMSG_SHOW_CONTENLIST] : Execute");
-     // TODO: IPC_UPDATEPROPと同様に、Courierを使用してイベントを発火する
+    console.debug(this.LOGEVENT, "[onMSG_SHOW_CONTENLIST] : Execute");
+    // TODO: IPC_UPDATEPROPと同様に、Courierを使用してイベントを発火する
   }
 
   private onIPC_ALIVE(event: any, args: any) {
-    console.debug("[Pixstock][Messaging][onIPC_ALIVE] : Execute");
-     // TODO: IPC_UPDATEPROPと同様に、Courierを使用してイベントを発火する
+    console.debug(this.LOGEVENT, "[onIPC_ALIVE] : Execute");
+    // TODO: IPC_UPDATEPROPと同様に、Courierを使用してイベントを発火する
   }
 
   private onIPC_UPDATEVIEW(event: any, args: IpcResponse) {
-    console.debug("[Pixstock][Messaging][onIPC_UPDATEVIEW] : Execute", args);
+    console.debug(this.LOGEVENT, "[onIPC_UPDATEVIEW] : Execute", args);
 
     // "IPC_UPDATEVIEW"メッセージの、本文をインスタンス化する。
     var responseObj = JSON.parse(args.body) as IpcUpdateViewResponse;
-
-    // DUMP --------
-    //this.logger.debug(responseObj);
-    //responseObj.UpdateList.forEach(element => {
-    //    this.logger.debug("[UpdateList] ", element);
-    //});
-    //this.logger.debug("[Parameter] ", responseObj.Parameter);
-    // -------------
-
-    this.UpdateView.emit(responseObj); // TODO: IPC_UPDATEPROPと同様に、Courierを使用してイベントを発火する
+    this.courier.fireUpdateView(responseObj);
   }
 
   private onIPC_UPDATEPROP(event: any, args: IpcResponse) {
-    console.debug("[Pixstock][Messaging][onIPC_UPDATEPROP] : Execute", args);
+    console.debug(this.LOGEVENT, "[onIPC_UPDATEPROP] : Execute", args);
 
     // "IPC_UPDATEPROP"メッセージの、本文をインスタンス化する。
     var responseObj = JSON.parse(args.body) as IpcUpdatePropResponse;
-    // DUMP: JSON文字列からオブジェクトを作成できているか確認用のダンプ出力
-    console.debug("[Pixstock][Messaging][onIPC_UPDATEPROP] : Dump Response", responseObj);
-
     this.courier.fireInvalidateProp(responseObj);
   }
 }

@@ -1,112 +1,27 @@
 <mat-sidenav-container class="pixstock-container">
   <mat-sidenav #sidenav [mode]="over">
-    <p><button mat-button (click)="sidenav.toggle()">Toggle</button></p>
+    <p>
+      <button mat-button (click)="sidenav.toggle()">Toggle</button>
+    </p>
   </mat-sidenav>
   <mat-sidenav-content>
-    <mdb-navbar SideClass="navbar fixed-top navbar-expand-lg navbar-dark cyan scrolling-navbar ie-nav" [containerInside]="false">
-      <logo>
-        <a class="logo navbar-brand" href="#"><strong>Navbar</strong></a>
-      </logo>
-      <links>
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active waves-light" mdbWavesEffect>
-            <a class="nav-link" (click)="sidenav.toggle()">Home <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item waves-light" mdbWavesEffect>
-            <a class="nav-link">Features</a>
-          </li>
-          <li class="nav-item waves-light" mdbWavesEffect>
-            <a class="nav-link">Pricing</a>
-          </li>
-          <li class="nav-item waves-light" mdbWavesEffect>
-            <a class="nav-link">Opinions</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav nav-flex-icons">
-          <li class="nav-item waves-light" mdbWavesEffect>
-            <a class="nav-link"><i class="fa fa-facebook"></i></a>
-          </li>
-          <li class="nav-item waves-light" mdbWavesEffect>
-            <a class="nav-link"><i class="fa fa-twitter"></i></a>
-          </li>
-          <li class="nav-item waves-light" mdbWavesEffect>
-            <a class="nav-link"><i class="fa fa-instagram"></i></a>
-          </li>
-        </ul>
-      </links>
-    </mdb-navbar>
-    <main>
-      <div class="container">
-        <div class="row pt-5" style="margin-top:35px;">
-          <div class="col text-center">
-            <div style="text-align:center">
-              <h1>
-                Welcome to {{ title }}!
-              </h1>
-              <img width="300" alt="Angular Logo" class="animated fadeInDownBig" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-              <p>I wise gecko told me once: <b>"code doesn't lie!"</b></p>
-
-              <!--Social buttons-->
-              <div class="text-center mb-3">
-
-                <a class="btn-floating btn-small btn-fb waves-light">
-                  <i class="fa fa-facebook"> </i>
-                </a>
-                &nbsp;
-                <a class="btn-floating btn-small btn-tw waves-light">
-                  <i class="fa fa-twitter"> </i>
-                </a>
-                &nbsp;
-                <a class="btn-floating btn-small btn-gplus waves-light">
-                  <i class="fa fa-google-plus"> </i>
-                </a>
-                &nbsp;
-                <a class="btn-floating btn-small btn-li waves-light">
-                  <i class="fa fa-linkedin"> </i>
-                </a>
-                &nbsp;
-                <a class="btn-floating btn-small btn-git waves-light">
-                  <i class="fa fa-github"> </i>
-                </a>
-                &nbsp;
-                <a class="btn-floating btn-small btn-pin waves-light">
-                  <i class="fa fa-pinterest"> </i>
-                </a>
-                &nbsp;
-                <a class="btn-floating btn-small btn-ins waves-light">
-                  <i class="fa fa-instagram"> </i>
-                </a>
-
-              </div>
-              <!--/.Social buttons-->
-            </div>
-          </div>
-        </div>
-        <div class="row justify-content-md-center">
-          <div class="col-md-9 " style="margin-top:35px; height:400px;">
-            <my-map></my-map>
-            asdfasdf
-          </div>
-        </div>
-      </div>
-    </main>
-    CCC外部起動AA
 
     <h3>Basic Buttons</h3>
     <div class="button-row">
-      <button mat-button (click)="onDebugBasicButton()">Basic</button>
       <div>
-        <button mat-button (click)="onTRNS_TOPSCREEN()" color="primary">TRNS_TOPSCREEN</button>
+        <button mat-button (click)="onTRNS_TOPSCREEN()" color="primary">TRNS_TOPSCREEN</button><br>
+        <button mat-button (click)="onTrnsFinder()" color="primary">ファインダ画面表示</button><br>
         <button mat-button (click)="onACT_REQINVALIDATE_CATEGORYTREE()" color="primary">ACT_REQINVALIDATE_CATEGORYTREE</button>
+
+        <button mat-button (click)="onDebugTransrationRoot()" color="primary">ルート状態に強制遷移</button>
       </div>
-      <button mat-button (click)="onDebugBasicButton2()" color="accent">onDebugBasicButton2</button>
-      <button mat-button color="warn">Warn</button>
-      <button mat-button disabled>Disabled</button>
-      <a mat-button routerLink=".">Link</a>
     </div>
 
-    <category-tree></category-tree>
-    <explorer-list></explorer-list>
+    <div >
+      <dashboard *ngIf="viewModel.screenStatus.dashboard"></dashboard>
+      <preview *ngIf="viewModel.screenStatus.preview"></preview>
+      <finder *ngIf="viewModel.screenStatus.finder"></finder>
+    </div>
 
     <!--Footer-->
     <footer class="page-footer mdb-color text-center text-md-left pt-4 mt-4">

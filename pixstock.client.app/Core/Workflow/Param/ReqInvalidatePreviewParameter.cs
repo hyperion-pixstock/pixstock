@@ -7,8 +7,13 @@ namespace pixstock.client.app.Workflow
 {
   public class ReqInvalidatePreviewParameter
   {
-    public int Operation;
+    /** オペレーション名 */
+    public string Operation;
+
+    /** コンテントID(任意) */
     public long ContentId;
+
+    /** コンテント一覧での位置(任意) */
     public int Position;
   }
 }

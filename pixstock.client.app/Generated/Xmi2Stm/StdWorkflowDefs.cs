@@ -14,9 +14,12 @@ public class CLS_INIT : States {}
 public class CLS_ROOT : States {}
 public class CLS_Dashboard : States {}
 public class CLS_DashboardBase : States {}
-public class CLS_CategoryList : States {}
-public class CLS_CategoryListBase : States {}
+public class CLS_Finder : States {}
+public class CLS_FinderBase : States {}
+public class CLS_Previews : States {}
 public class CLS_Preview : States {}
+public class CLS_ContentListPreview : States {}
+public class CLS_PreviewBase : States {}
 public class CLS_RESPONSE_GETCATEGORY : Events {}
 public class CLS_RESPONSE_GETCATEGORYCONTENT : Events {}
 public class CLS_ACT_DEBUGCOMMAND : Events {}
@@ -33,19 +36,23 @@ public class CLS_ACT_DISPLAY_PREVIEWCURRENTLIST : Events {}
 public class CLS_RESPONSE_GETCONTENT : Events {}
 public class CLS_TRNS_TOPSCREEN : Events {}
 public class CLS_TRNS_EXIT : Events {}
-public class CLS_TRNS_ThumbnailListPage : Events {}
+public class CLS_TRNS_FinderScreen : Events {}
 public class CLS_TRNS_PreviewPage : Events {}
 public class CLS_TRNS_BACK : Events {}
 public class CLS_TRNS_DEBUG_BACK : Events {}
+public class CLS_TRNS_ContentListPreview : Events {}
 public class CLSINVALID_INVALID : Events {}
 public partial class States : WorkflowStateBase {
 	public static CLS_INIT INIT { get; } = new CLS_INIT();
 	public static CLS_ROOT ROOT { get; } = new CLS_ROOT();
 	public static CLS_Dashboard Dashboard { get; } = new CLS_Dashboard();
 	public static CLS_DashboardBase DashboardBase { get; } = new CLS_DashboardBase();
-	public static CLS_CategoryList CategoryList { get; } = new CLS_CategoryList();
-	public static CLS_CategoryListBase CategoryListBase { get; } = new CLS_CategoryListBase();
+	public static CLS_Finder Finder { get; } = new CLS_Finder();
+	public static CLS_FinderBase FinderBase { get; } = new CLS_FinderBase();
+	public static CLS_Previews Previews { get; } = new CLS_Previews();
 	public static CLS_Preview Preview { get; } = new CLS_Preview();
+	public static CLS_ContentListPreview ContentListPreview { get; } = new CLS_ContentListPreview();
+	public static CLS_PreviewBase PreviewBase { get; } = new CLS_PreviewBase();
 }
 public partial class Events : WorkflowEventBase {
         public static Dictionary<string, Events> cacheEventsDict = null;
@@ -81,10 +88,11 @@ public partial class Events : WorkflowEventBase {
 	public static CLS_RESPONSE_GETCONTENT RESPONSE_GETCONTENT { get; } = new CLS_RESPONSE_GETCONTENT();
 	public static CLS_TRNS_TOPSCREEN TRNS_TOPSCREEN { get; } = new CLS_TRNS_TOPSCREEN();
 	public static CLS_TRNS_EXIT TRNS_EXIT { get; } = new CLS_TRNS_EXIT();
-	public static CLS_TRNS_ThumbnailListPage TRNS_ThumbnailListPage { get; } = new CLS_TRNS_ThumbnailListPage();
+	public static CLS_TRNS_FinderScreen TRNS_FinderScreen { get; } = new CLS_TRNS_FinderScreen();
 	public static CLS_TRNS_PreviewPage TRNS_PreviewPage { get; } = new CLS_TRNS_PreviewPage();
 	public static CLS_TRNS_BACK TRNS_BACK { get; } = new CLS_TRNS_BACK();
 	public static CLS_TRNS_DEBUG_BACK TRNS_DEBUG_BACK { get; } = new CLS_TRNS_DEBUG_BACK();
+	public static CLS_TRNS_ContentListPreview TRNS_ContentListPreview { get; } = new CLS_TRNS_ContentListPreview();
 	public static CLSINVALID_INVALID INVALID { get; } = new CLSINVALID_INVALID();
 }
 }

@@ -14,14 +14,23 @@ import { DeliveryService } from './service/delivery.service';
 import { MessagingService } from './service/messaging.service';
 import { ViewModel } from './viewmodel';
 import { CourierService } from './service/courier.service';
+import { NaviService } from './service/navi.service';
+import { DashboardScreen } from './components/screen/dashboard/dashboard.screen';
+import { FinderScreen } from './components/screen/finder/finder.screen';
+import { PreviewScreen } from './components/screen/preview/preview.screen';
 
 @NgModule({
   declarations: [
     AppComponent,
     DisplayMapComponent,
+    // Fragment
     CategoryTreeFragment,
     ExplorerListFragment,
-    ContentPreviewFragment
+    ContentPreviewFragment,
+    // Screen
+    DashboardScreen,
+    FinderScreen,
+    PreviewScreen,
   ],
   imports: [
     BrowserModule,
@@ -42,6 +51,7 @@ import { CourierService } from './service/courier.service';
     MessagingService,
     CourierService,
     DeliveryService,
+    NaviService,
     ViewModel
   ],
   bootstrap: [AppComponent]
@@ -50,7 +60,8 @@ export class AppModule {
   constructor(
     private ngZone: NgZone,
     private messaging: MessagingService,
-    private delivery: DeliveryService
+    private delivery: DeliveryService,
+    private navi: NaviService
   ) {
     let w: any = window;
     w['angularComponentRef'] = {
@@ -70,16 +81,10 @@ export class AppModule {
         parent.setFirstLoad();
         console.info("IPCオブジェクト取得", parent.getIpc());
         messaging.initialize(parent.getIpc(), true); // IPCオブジェクト取得
-        //courier.initialize();
-        delivery.initialize();
-        //navi.initialize();
       } else {
         console.info("[App] App初期化済み判定");
         console.info("IPCオブジェクト取得", parent.getIpc());
         messaging.initialize(parent.getIpc(), false); // IPCオブジェクト取得
-        //courier.initialize();
-        delivery.initialize();
-        //navi.initialize();
       }
     }
   }

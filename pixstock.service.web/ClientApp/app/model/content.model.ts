@@ -3,6 +3,7 @@ export interface Content {
   Name: string;
   IdentifyKey: string;
   ContentHash: string;
+  ThumbnailImageSrcUrl: string;
   ThumbnailKey: string;
   Caption: string;
   Comment: string;

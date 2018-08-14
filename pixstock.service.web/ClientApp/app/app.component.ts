@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { IpcUpdatePropResponse } from './service/contract/response.contract';
+import { IpcUpdatePropResponse, IpcUpdateViewResponse, UpdateViewRequestItem } from './service/contract/response.contract';
 import { DeliveryService } from './service/delivery.service';
 import { MessagingService } from './service/messaging.service';
+import { ViewModel } from './viewmodel';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +14,10 @@ export class AppComponent {
 
   constructor(
     public messaging: MessagingService,
-    private delivery: DeliveryService
+    private delivery: DeliveryService,
+    private viewModel: ViewModel
   ) {
+
   }
 
   // サンプル
@@ -47,6 +50,13 @@ export class AppComponent {
   }
 
   /**
+   * (Debug)ファインダ画面へ遷移する
+   */
+  onTrnsFinder() {
+    this.delivery.showFinder();
+  }
+
+  /**
    * サンプル
    */
   onDebugBasicButton2() {
@@ -54,4 +64,12 @@ export class AppComponent {
 
     this.delivery.executeDebugCommand("Nanikaなにか");
   }
+
+  /**
+   * (DEBUG)ルート状態に強制遷移します
+   */
+  onDebugTransrationRoot() {
+    this.delivery.transRootBack();
+  }
+
 }

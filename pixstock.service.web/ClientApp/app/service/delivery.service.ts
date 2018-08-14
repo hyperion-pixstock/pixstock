@@ -8,21 +8,17 @@ import { IntentMessage, IpcMessage } from "./contract/delivery.contract";
  */
 @Injectable()
 export class DeliveryService {
-  initializedFlag: boolean = false;
+  private LOGEVENT: string = "[Pixstock][DeliveryService]";
 
   /**
    * コンストラクタ
    *
-   * @param logger ロガー
    * @param messaging BFF間のメッセージサービス
+   * @param viewModel
    */
   constructor(
     protected messaging: MessagingService,
     protected viewModel: ViewModel) {
-  }
-
-  public initialize() {
-    console.debug("initialize");
   }
 
   /**
@@ -47,7 +43,19 @@ export class DeliveryService {
     console.info("[Pixstock][Delivery][backScreen]");
     var intentMessage = new IntentMessage();
     intentMessage.ServiceType = "Workflow";
-    intentMessage.MessageName = "ACT_BACKSCREEN";
+    intentMessage.MessageName = "TRNS_BACK";
+    intentMessage.Parameter = "";
+
+    this.send(intentMessage);
+  }
+
+  /**
+   * デバッグ用遷移メッセージを発行します
+   */
+  public transRootBack() {
+    var intentMessage = new IntentMessage();
+    intentMessage.ServiceType = "Workflow";
+    intentMessage.MessageName = "TRNS_DEBUG_BACK";
     intentMessage.Parameter = "";
 
     this.send(intentMessage);
@@ -56,11 +64,11 @@ export class DeliveryService {
   /**
    * カテゴリ一覧画面を表示する遷移イベントを発行します
    */
-  public showScreenCategorytList() {
-    console.info("[Pixstock][Delivery][showScreenCategorytList] カテゴリ一覧画面への遷移メッセージ送信");
+  public showFinder() {
+    console.info("[Pixstock][Delivery][showFinder] カテゴリ一覧画面への遷移メッセージ送信");
     var intentMessage = new IntentMessage();
     intentMessage.ServiceType = "Workflow";
-    intentMessage.MessageName = "TRNS_ThumbnailListPage";
+    intentMessage.MessageName = "TRNS_FinderScreen";
     intentMessage.Parameter = "";
 
     this.send(intentMessage);
@@ -72,10 +80,10 @@ export class DeliveryService {
    * @param index 表示したいアイテムのナビゲーションリスト内での位置
    */
   public showScreenPreview(index: number) {
-    console.info("[Pixstock][Delivery][showScreenPreview] プレビュー画面への遷移メッセージ送信", index);
+    console.info("[Pixstock][Delivery][showScreenPreview] プレビュー画面への遷移メッセージ送信", "コンテントリストの選択", index);
     var intentMessage = new IntentMessage();
     intentMessage.ServiceType = "Workflow";
-    intentMessage.MessageName = "TRNS_PreviewPage";
+    intentMessage.MessageName = "TRNS_ContentListPreview";
     intentMessage.Parameter = index.toString();
 
     this.send(intentMessage);
@@ -109,9 +117,43 @@ export class DeliveryService {
     var intentMessage = new IntentMessage();
     intentMessage.ServiceType = "Workflow";
     intentMessage.MessageName = "ACT_REQINVALIDATE_CONTENTLIST";
-    intentMessage.Parameter = JSON.stringify({ContentId:categoryId});
+    intentMessage.Parameter = JSON.stringify({ ContentId: categoryId });
 
     this.send(intentMessage);
+  }
+
+
+
+  /**
+   * プレビュー画面の表示内容を更新する
+   *
+   * @param position コンテント一覧の位置
+   */
+  public invalidatePreviewContentList(position: number) {
+    // プレビューコンテント更新要求メッセージ(ACT_REQINVALIDATE_PREVIEW)の送信用メソッド
+    console.debug(this.LOGEVENT, "[invalidatePreviewContentList] - IN");
+
+    var intentMessage = new IntentMessage();
+    intentMessage.ServiceType = "Workflow";
+    intentMessage.MessageName = "ACT_REQINVALIDATE_PREVIEW";
+    intentMessage.Parameter = JSON.stringify({
+      Operation: "NavigationPosition",
+      Position: position
+    });
+    this.send(intentMessage);
+
+    console.debug(this.LOGEVENT, "[invalidatePreviewContentList] - OUT");
+  }
+
+  /**
+   * プレビュー画面の表示内容を更新する
+   *
+   * コンテントIDに指定したコンテントで更新する。
+   *
+   * @param contentId コンテントID
+   */
+  public invalidatePreviewContentId(contentId:number) {
+    // TODO:
   }
 
   public executeDebugCommand(command: string) {

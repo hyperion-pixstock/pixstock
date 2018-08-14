@@ -1,35 +1,33 @@
-import { Component } from "@angular/core";
-import { ViewModel } from "../../../viewmodel";
-
-class ExplorerItem {
-  constructor(name: string) {
-    this.name = name;
-  }
-
-  name: string;
-
-  aaa() {
-    console.info("click " + this.name);
-  }
-}
+import { Component, EventEmitter, Output, AfterViewChecked, AfterViewInit } from "@angular/core";
+import { ViewModel, ContentListPageItem } from "../../../viewmodel";
+import { ItemListSelectEventArg } from "ClientApp/app/event";
 
 @Component({
   selector: 'explorer-list',
   templateUrl: './explorer-list.fragment.html',
   styleUrls: ['./explorer-list.fragment.scss']
 })
-export class ExplorerListFragment {
-  articles = [
-    {
-      name: "A",
-      aaa() {
-        console.info("!!!click " + this.name);
-      }
-    }
-  ];
+export class ExplorerListFragment implements AfterViewInit  {
+  private LOGEVENT: string = "[Pixstock][ExplorerListFragment]";
 
+  @Output("item-select")
+  private itemSelectedMessage = new EventEmitter();
+
+  /**
+   * コンストラクタ
+   * @param viewmodel ViewModel
+   */
   constructor(private viewmodel: ViewModel) {
-    this.articles.push(new ExplorerItem("a"));
-    this.articles.push(new ExplorerItem("b"));
+
+  }
+
+  ngAfterViewInit() {
+
+  }
+
+  onClick(item: ContentListPageItem, position: number) {
+    console.debug(this.LOGEVENT + "[onClick] - IN", item, "選択位置", position);
+    this.itemSelectedMessage.next(new ItemListSelectEventArg(this, item, position));
+    console.debug(this.LOGEVENT + "[onClick] - OUT");
   }
 }

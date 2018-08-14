@@ -1,25 +1,23 @@
 using System;
 using Microsoft.Extensions.Caching.Memory;
 using NLog;
-using pixstock.apl.app.core.Cache;
 using pixstock.apl.app.core.Dao;
 using pixstock.apl.app.core.Infra;
-using pixstock.apl.app.Models;
 using pixstock.client.app.Core.Service;
 using pixstock.client.app.Infra.Resolver;
 using pixstock.client.app.Infra.Resolver.Impl;
 
 namespace pixstock.client.app.Core.ServerMessageApi.Handler {
   /// <summary>
-  /// コンテント一覧更新要求（カテゴリ）メッセージの処理するハンドラ
+  /// プレビュー取得要求メッセージを処理するハンドラ
   /// </summary>
-  public class LoadContentListByCategoryHandler : IResolveDeclare {
-    public string ResolveName => "LoadContentListByCategory";
+  public class ContentPreviewHandler : IResolveDeclare {
+    public string ResolveName => "ContentPreview";
 
     public Type ResolveType => typeof (Handler);
 
     public class Handler : PackageResolveHandler {
-      const string cacheKey = "ContentList";
+      const string CACHE_KEY = "PreviewUrl";
 
       readonly Logger mLogger;
 
@@ -37,22 +35,23 @@ namespace pixstock.client.app.Core.ServerMessageApi.Handler {
         mLogger.Debug ("IN - {@Param}", param);
         ServerMessageServiceParam paramObj = (ServerMessageServiceParam) param;
         var paramHandler = paramObj.Data as HandlerParameter;
-        var dao_cat = new CategoryDao ();
-        var category = dao_cat.LoadCategory (categoryId: paramHandler.CategoryId, offsetContent: paramHandler.PageNo);
+        var dao_content = new ContentDao ();
+        var content = dao_content.LoadContent (paramHandler.ContentId);
 
-        var cacheEntryOptions = new MemoryCacheEntryOptions ();
-        mMemoryCache.Set (cacheKey,
-          new ContentListParam () { Category = category, ContentList = category.LinkContentList.ToArray () },
+        // 取得したURLをキャッシュに格納
+        var cacheEntryOptions = new MemoryCacheEntryOptions ()
+          .SetSlidingExpiration (TimeSpan.FromSeconds (30));
+        mMemoryCache.Set (CACHE_KEY,
+          content.PreviewFileUrl,
           cacheEntryOptions);
 
-        mIntentManager.AddIntent (ServiceType.Workflow, "ACT_RESINVALIDATE_CONTENTLIST");
+        mIntentManager.AddIntent (ServiceType.FrontendIpc, "UpdateProp", CACHE_KEY);
         mLogger.Debug ("OUT");
       }
     }
 
     public class HandlerParameter {
-      public long CategoryId;
-      public int PageNo;
+      public long ContentId;
     }
   }
 }

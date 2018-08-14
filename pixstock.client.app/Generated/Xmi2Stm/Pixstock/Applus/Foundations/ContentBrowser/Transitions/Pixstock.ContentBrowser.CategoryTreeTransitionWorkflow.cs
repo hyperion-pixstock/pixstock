@@ -21,12 +21,18 @@ DefineHierarchyOn(States.ROOT)
 DefineHierarchyOn(States.Dashboard)
 .WithHistoryType(HistoryType.None)
 .WithInitialSubState(States.DashboardBase)
-.WithSubState(States.CategoryList)
+.WithSubState(States.Finder)
 ;
-DefineHierarchyOn(States.CategoryList)
+DefineHierarchyOn(States.Finder)
 .WithHistoryType(HistoryType.None)
-.WithInitialSubState(States.CategoryListBase)
+.WithInitialSubState(States.FinderBase)
+.WithSubState(States.Previews)
+;
+DefineHierarchyOn(States.Previews)
+.WithHistoryType(HistoryType.None)
+.WithInitialSubState(States.PreviewBase)
 .WithSubState(States.Preview)
+.WithSubState(States.ContentListPreview)
 ;
 In(States.INIT)
 .On(Events.TRNS_TOPSCREEN)
@@ -38,17 +44,23 @@ In(States.ROOT)
 .On(Events.TRNS_DEBUG_BACK)
 .Goto(States.ROOT);
 In(States.DashboardBase)
-.On(Events.TRNS_ThumbnailListPage)
-.Goto(States.CategoryList);
-In(States.CategoryListBase)
+.On(Events.TRNS_FinderScreen)
+.Goto(States.Finder);
+In(States.FinderBase)
 .On(Events.TRNS_PreviewPage)
 .Goto(States.Preview);
-In(States.CategoryListBase)
+In(States.FinderBase)
 .On(Events.TRNS_BACK)
 .Goto(States.Dashboard);
+In(States.FinderBase)
+.On(Events.TRNS_ContentListPreview)
+.Goto(States.ContentListPreview);
 In(States.Preview)
 .On(Events.TRNS_BACK)
-.Goto(States.CategoryListBase);
+.Goto(States.FinderBase);
+In(States.ContentListPreview)
+.On(Events.TRNS_BACK)
+.Goto(States.FinderBase);
 In(States.ROOT)
 .On(Events.RESPONSE_GETCATEGORY)
 .Execute<object>(RESPONSE_GETCATEGORY);
@@ -84,17 +96,17 @@ In(States.DashboardBase)
 .ExecuteOnEntry(HomePageBase_Entry);
 In(States.DashboardBase)
 .ExecuteOnExit(HomePageBase_Exit);
-In(States.CategoryList)
+In(States.Finder)
 .ExecuteOnEntry(ThumbnailListPage_Entry);
-In(States.CategoryList)
+In(States.Finder)
 .ExecuteOnExit(ThumbnailListPage_Exit);
-In(States.CategoryListBase)
+In(States.FinderBase)
 .On(Events.CategorySelectBtnClick)
 .Execute<object>(CategorySelectBtnClick);
-In(States.CategoryListBase)
+In(States.FinderBase)
 .On(Events.ACT_ContinueCategoryList)
 .Execute<object>(ACT_ContinueCategoryList);
-In(States.CategoryListBase)
+In(States.FinderBase)
 .On(Events.ACT_UpperCategoryList)
 .Execute<object>(ACT_UpperCategoryList);
 In(States.Preview)
@@ -107,6 +119,10 @@ In(States.Preview)
 In(States.Preview)
 .On(Events.RESPONSE_GETCONTENT)
 .Execute<object>(RESPONSE_GETCONTENT);
+In(States.ContentListPreview)
+.ExecuteOnEntry(__FTC_Event_ContentListPreview_Entry);
+In(States.ContentListPreview)
+.ExecuteOnExit(__FTC_Event_ContentListPreview_Exit);
 	Initialize(States.INIT);
 }
 public virtual async Task RESPONSE_GETCATEGORY(object param) {
@@ -171,12 +187,12 @@ public virtual async Task HomePageBase_Exit() {
 public virtual async Task ThumbnailListPage_Entry() {
 	await OnThumbnailListPage_Entry();
 ICollection<int> ribbonMenuEventId = new List<int>{  };
-	ShowFrame("CategoryList",ribbonMenuEventId);
+	ShowFrame("Finder",ribbonMenuEventId);
 }
 public virtual async Task ThumbnailListPage_Exit() {
 	await OnThumbnailListPage_Exit();
 ICollection<int> ribbonMenuEventId = new List<int>{  };
-	HideFrame("CategoryList", ribbonMenuEventId);
+	HideFrame("Finder", ribbonMenuEventId);
 }
 public virtual async Task CategorySelectBtnClick(object param) {
 	Events.CategorySelectBtnClick.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
@@ -210,6 +226,14 @@ public virtual async Task RESPONSE_GETCONTENT(object param) {
 	Events.RESPONSE_GETCONTENT.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
 	await OnRESPONSE_GETCONTENT(param);
 	Events.RESPONSE_GETCONTENT.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
+}
+public virtual async Task __FTC_Event_ContentListPreview_Entry() {
+ICollection<int> ribbonMenuEventId = new List<int>{  };
+	ShowFrame("ContentListPreview",ribbonMenuEventId);
+}
+public virtual async Task __FTC_Event_ContentListPreview_Exit() {
+ICollection<int> ribbonMenuEventId = new List<int>{  };
+	HideFrame("ContentListPreview", ribbonMenuEventId);
 }
 }
 }
