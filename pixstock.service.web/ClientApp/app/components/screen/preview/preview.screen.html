@@ -2,6 +2,11 @@
 {{viewmodel.PreviewContent?.Name}}<br>
 {{viewmodel.PreviewContent?.ReadableFlag}}<br>
 
+<div>
+  <button mat-button (click)="onPrevPreview()" color="primary">前へ</button>
+  <button mat-button (click)="onNextPreview()" color="primary">次へ</button>
+</div>
+
 <img [src]="viewmodel.PreviewUrl" class="img-fluid">
 
 

@@ -149,6 +149,43 @@ export class DeliveryService {
   /**
    * プレビュー画面の表示内容を更新する
    *
+   * コンテント一覧の現在位置から次のコンテント情報を表示する。
+   */
+  public invalidatePreviewContentListNext() {
+    console.debug(this.LOGEVENT, "[invalidatePreviewContentListNext] - IN");
+    var intentMessage = new IntentMessage();
+    intentMessage.ServiceType = "Workflow";
+    intentMessage.MessageName = "ACT_REQINVALIDATE_PREVIEW";
+    intentMessage.Parameter = JSON.stringify({
+      Operation: "NavigationNext"
+    });
+    this.send(intentMessage);
+
+    console.debug(this.LOGEVENT, "[invalidatePreviewContentListNext] - OUT");
+  }
+
+  /**
+   * プレビュー画面の表示内容を更新する
+   *
+   * コンテント一覧の現在位置から前のコンテント情報を表示する。
+   */
+  public invalidatePreviewContentListPrev() {
+    console.debug(this.LOGEVENT, "[invalidatePreviewContentListPrev] - IN");
+    var intentMessage = new IntentMessage();
+    intentMessage.ServiceType = "Workflow";
+    intentMessage.MessageName = "ACT_REQINVALIDATE_PREVIEW";
+    intentMessage.Parameter = JSON.stringify({
+      Operation: "NavigationPrev"
+    });
+    this.send(intentMessage);
+
+    console.debug(this.LOGEVENT, "[invalidatePreviewContentListPrev] - OUT");
+  }
+
+
+  /**
+   * プレビュー画面の表示内容を更新する
+   *
    * コンテントIDに指定したコンテントで更新する。
    *
    * @param contentId コンテントID

@@ -30,6 +30,20 @@ export class PreviewScreen implements AfterViewInit {
 
     console.debug(this.LOGEVENT, "[ngAfterViewInit]", "- OUT");
   }
+
+  /**
+   * 「前へ」ボタン押下時のイベントハンドラ
+   */
+  onPrevPreview() {
+    this.deliverySrv.invalidatePreviewContentListPrev();
+  }
+
+  /**
+   * 「次へ」ボタン押下時のイベントハンドラ
+   */
+  onNextPreview(){
+    this.deliverySrv.invalidatePreviewContentListNext();
+  }
 }
 
 export interface PreviewParam {

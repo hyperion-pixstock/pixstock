@@ -23,6 +23,8 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions {
 
     readonly Container mContainer;
 
+    int mCurrentPreviewContentListPosition = 0; // < プレビュー画面に表示しているコンテントの、コンテントリスト内での位置
+
     public CategoryTreeTransitionWorkflow (Container container) {
       this.mContainer = container;
       this.mLogger = LogManager.GetCurrentClassLogger ();
@@ -299,24 +301,56 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions {
       ReqInvalidatePreviewParameter paramObject = new ReqInvalidatePreviewParameter ();
       JsonConvert.PopulateObject (param.ToString (), paramObject);
 
-      long? updateContentId = null; //< プレビューの表示を行うコンテントID
+      long? currentPreviewContentId = null; //< プレビューの表示を行うコンテントID
       try {
         switch (paramObject.Operation) {
           case "NavigationPosition":
-            ContentListParam objContentList;
-            if (memCache.TryGetValue ("ContentList", out objContentList)) {
-              // コンテント一覧の項目位置(ReqInvalidatePreviewParameter.Position)にあるコンテント情報を読み込む
-              var content = objContentList.ContentList[paramObject.Position];
-              updateContentId = content.Id;
-              intentManager.AddIntent (ServiceType.Server, "ContentPreview", new ContentPreviewHandler.HandlerParameter { ContentId = content.Id });
-            } else {
-              throw new ApplicationException ("キャッシュからコンテント一覧を取得できませんでした。");
+            {
+              ContentListParam objContentList;
+              if (memCache.TryGetValue ("ContentList", out objContentList)) {
+                mCurrentPreviewContentListPosition = paramObject.Position;
+
+                // コンテント一覧の項目位置(ReqInvalidatePreviewParameter.Position)にあるコンテント情報を読み込む
+                var content = objContentList.ContentList[mCurrentPreviewContentListPosition];
+                currentPreviewContentId = content.Id;
+                intentManager.AddIntent (ServiceType.Server, "ContentPreview", new ContentPreviewHandler.HandlerParameter { ContentId = content.Id });
+              } else {
+                throw new ApplicationException ("キャッシュからコンテント一覧を取得できませんでした。");
+              }
             }
             break;
           case "NavigationNext":
-            // TODO: 未実装
+            {
+              ContentListParam objContentList;
+              if (memCache.TryGetValue ("ContentList", out objContentList)) {
+                if (objContentList.ContentList.Length > mCurrentPreviewContentListPosition + 1) {
+                  mCurrentPreviewContentListPosition = mCurrentPreviewContentListPosition + 1;
+                  var content = objContentList.ContentList[mCurrentPreviewContentListPosition];
+                  this.mLogger.Debug ($"現在位置の次のコンテントを読み込みます({@content.Id})");
+                  currentPreviewContentId = content.Id;
+                  intentManager.AddIntent (ServiceType.Server, "ContentPreview", new ContentPreviewHandler.HandlerParameter { ContentId = content.Id });
+                }
+              } else {
+                throw new ApplicationException ("キャッシュからコンテント一覧を取得できませんでした。");
+              }
+            }
+            break;
           case "NavigationPrev":
-            // TODO: 未実装
+            this.mLogger.Debug ("Operation={@OperationName}", paramObject.Operation); {
+              ContentListParam objContentList;
+              if (memCache.TryGetValue ("ContentList", out objContentList)) {
+                if (mCurrentPreviewContentListPosition > 0) {
+                  mCurrentPreviewContentListPosition = mCurrentPreviewContentListPosition - 1;
+                  var content = objContentList.ContentList[mCurrentPreviewContentListPosition];
+                  this.mLogger.Debug ($"現在位置の前のコンテントを読み込みます({@content.Id})");
+                  currentPreviewContentId = content.Id;
+                  intentManager.AddIntent (ServiceType.Server, "ContentPreview", new ContentPreviewHandler.HandlerParameter { ContentId = content.Id });
+                }
+              } else {
+                throw new ApplicationException ("キャッシュからコンテント一覧を取得できませんでした。");
+              }
+            }
+            break;
           case "Content":
             // TODO: 未実装
           default:
@@ -324,13 +358,13 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions {
             break;
         }
 
-        if (updateContentId.HasValue) {
+        if (currentPreviewContentId.HasValue) {
           // コンテント情報の更新
           intentManager.AddIntent (ServiceType.Server, "ContentOperationExecution", new ContentOperationExecutionHandler.HandlerParameter (
             new ContentOperationExecutionHandler.HandlerParameter.Operation[] {
               new ContentOperationExecutionHandler.HandlerParameter.Operation { OperationName = "Read" }
             }) {
-            ContentId = updateContentId.Value
+            ContentId = currentPreviewContentId.Value
           });
         }
 
