@@ -119,7 +119,7 @@ namespace Pixstock.Service.Web.Controllers {
       bool result = false;
       switch (operation) {
         case "read":
-          content.ReadableFlag = !content.ReadableFlag; // DEBUG
+          content.ReadableFlag = true;
           result = true;
           break;
         default:
