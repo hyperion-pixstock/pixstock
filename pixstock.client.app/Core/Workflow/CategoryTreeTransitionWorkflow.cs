@@ -115,18 +115,24 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions {
     }
 
     async Task OnACT_DEBUGCOMMAND (object param) {
+      this.mLogger.Debug ("IN");
       try {
         var intentManager = mContainer.GetInstance<IIntentManager> ();
 
         await Task.Run (() => {
           this.mLogger.Debug ("[CategoryTreeTransitionWorkflow][OnACT_DEBUGCOMMAND] param={0}", param);
+
           var screenManager = mContainer.GetInstance<IScreenManager> ();
 
-          screenManager.DumpBackStack ();
+          if (param.ToString () == "RESET_TRANSITION") {
+            screenManager.DumpBackStack ();
+            intentManager.AddIntent (ServiceType.Workflow, "TRNS_DEBUG_BACK", "");
+          }
         });
       } catch (Exception expr) {
-        Console.WriteLine (expr.Message);
+        this.mLogger.Error (expr);
       }
+      this.mLogger.Debug ("OUT");
     }
 
     async Task OnACT_DISPLAY_PREVIEWCURRENTLIST (object param) {
@@ -293,6 +299,7 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions {
       ReqInvalidatePreviewParameter paramObject = new ReqInvalidatePreviewParameter ();
       JsonConvert.PopulateObject (param.ToString (), paramObject);
 
+      long? updateContentId = null; //< プレビューの表示を行うコンテントID
       try {
         switch (paramObject.Operation) {
           case "NavigationPosition":
@@ -300,6 +307,7 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions {
             if (memCache.TryGetValue ("ContentList", out objContentList)) {
               // コンテント一覧の項目位置(ReqInvalidatePreviewParameter.Position)にあるコンテント情報を読み込む
               var content = objContentList.ContentList[paramObject.Position];
+              updateContentId = content.Id;
               intentManager.AddIntent (ServiceType.Server, "ContentPreview", new ContentPreviewHandler.HandlerParameter { ContentId = content.Id });
             } else {
               throw new ApplicationException ("キャッシュからコンテント一覧を取得できませんでした。");
@@ -315,6 +323,17 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions {
             this.mLogger.Warn ("処理できないオペレーション名({@Operation})です", paramObject.Operation);
             break;
         }
+
+        if (updateContentId.HasValue) {
+          // コンテント情報の更新
+          intentManager.AddIntent (ServiceType.Server, "ContentOperationExecution", new ContentOperationExecutionHandler.HandlerParameter (
+            new ContentOperationExecutionHandler.HandlerParameter.Operation[] {
+              new ContentOperationExecutionHandler.HandlerParameter.Operation { OperationName = "Read" }
+            }) {
+            ContentId = updateContentId.Value
+          });
+        }
+
       } catch (Exception expr) {
         this.mLogger.Error (expr);
       }
@@ -337,12 +356,44 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions {
     }
 
     /// <summary>
-    /// コンテント情報更新通知
+    /// コンテント情報更新通知メッセージ
     /// </summary>
     /// <param name="param"></param>
     /// <returns></returns>
     async Task OnACT_RESINVALIDATE_CONTENT (object param) {
-      ResInvalidateContentParameter paramObject = (ResInvalidateContentParameter) param;
+      this.mLogger.Debug ("IN - {@Param}", param);
+      var paramObject = (ResInvalidateContentParameter) param;
+
+      var memCache = mContainer.GetInstance<IMemoryCache> ();
+      var intentManager = mContainer.GetInstance<IIntentManager> ();
+
+      // レジスタ名の設定／未設定で処理を切り分けます。
+      // 1. パラメータのレジスタ名が空文字の場合は、「コンテント情報取得要求」を実施する
+      // 2-1. 空文字ではない場合は、メモリキャッシュからデータを取得しメモリキャッシュに「PreviewContent」として値を格納する
+      // 2-2. InvalidatePropを実行する
+
+      if (string.IsNullOrEmpty (paramObject.RegisterName)) {
+        // 1.
+        this.mLogger.Info ("レジスタ名が未設定のため、コンテント情報取得要求を行います。");
+        intentManager.AddIntent (ServiceType.Server, "LoadContent", new LoadContentHandler.HandlerParameter {
+          ContentId = paramObject.ContentId,
+            RegisterName = "RANDOMWORD"
+        });
+      } else {
+        // 2.
+        this.mLogger.Info ("レジスタ名({@RegisterName})から値を読み込みます。", paramObject.RegisterName);
+        Content content;
+        if (memCache.TryGetValue (paramObject.RegisterName, out content)) {
+          memCache.Set ("PreviewContent",
+            content,
+            new MemoryCacheEntryOptions ());
+          intentManager.AddIntent (ServiceType.FrontendIpc, "UpdateProp", "PreviewContent");
+        } else {
+          throw new ApplicationException ("レジスタからContentオブジェクトを取得できませんでした。");
+        }
+      }
+
+      this.mLogger.Debug ("OUT");
     }
 
     /// <summary>

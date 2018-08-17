@@ -27,7 +27,7 @@ export class DeliveryService {
    * クライアントが利用可能であることを、BFFに通知するためのイベントです
    */
   public transTopScreen() {
-    console.info("[Pixstock][Delivery][transTopScreen] 遷移メッセージ送信");
+    console.info(this.LOGEVENT, "[transTopScreen]");
     var intentMessage = new IntentMessage();
     intentMessage.ServiceType = "Workflow";
     intentMessage.MessageName = "TRNS_TOPSCREEN";
@@ -40,10 +40,10 @@ export class DeliveryService {
    * 戻る遷移コマンドを発行します
    */
   public backScreen() {
-    console.info("[Pixstock][Delivery][backScreen]");
+    console.info(this.LOGEVENT, "[backScreen]");
     var intentMessage = new IntentMessage();
     intentMessage.ServiceType = "Workflow";
-    intentMessage.MessageName = "TRNS_BACK";
+    intentMessage.MessageName = "ACT_BACKSCREEN";
     intentMessage.Parameter = "";
 
     this.send(intentMessage);
@@ -55,8 +55,9 @@ export class DeliveryService {
   public transRootBack() {
     var intentMessage = new IntentMessage();
     intentMessage.ServiceType = "Workflow";
-    intentMessage.MessageName = "TRNS_DEBUG_BACK";
-    intentMessage.Parameter = "";
+    //intentMessage.MessageName = "TRNS_DEBUG_BACK";
+    intentMessage.MessageName = "ACT_DEBUGCOMMAND";
+    intentMessage.Parameter = "RESET_TRANSITION";
 
     this.send(intentMessage);
   }
@@ -95,7 +96,7 @@ export class DeliveryService {
    * @param categoryId カテゴリツリーを取得したい親カテゴリのID
    */
   public updateCategoryTree(categoryId: number) {
-    console.info("[Pixstock][Delivery][updateCategoryTree] ", );
+    console.info("[Pixstock][Delivery][updateCategoryTree] ");
     var intentMessage = new IntentMessage();
     intentMessage.ServiceType = "Workflow";
     intentMessage.MessageName = "ACT_REQINVALIDATE_CATEGORYTREE";
@@ -152,7 +153,7 @@ export class DeliveryService {
    *
    * @param contentId コンテントID
    */
-  public invalidatePreviewContentId(contentId:number) {
+  public invalidatePreviewContentId(contentId: number) {
     // TODO:
   }
 

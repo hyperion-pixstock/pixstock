@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using NLog;
 using pixstock.apl.app.Models;
@@ -34,6 +35,17 @@ namespace pixstock.apl.app.core.Dao {
       content.PreviewFileUrl = BASEURL + "/artifact/" + content.Id + "/preview";
       content.LinkCategory = LinkGetCategory (content.Id, response.Data.Link);
       return content;
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="contentId"></param>
+    public void UpdateRead(long contentId) {
+        var request = new RestRequest ("artifact/{id}/exec/read", Method.PUT);
+        request.AddUrlSegment ("id", contentId);
+
+        var response = mClient.Execute<PixstockResponseAapi<Boolean>> (request);
     }
 
     /// <summary>

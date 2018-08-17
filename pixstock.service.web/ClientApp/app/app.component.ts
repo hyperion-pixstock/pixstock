@@ -20,6 +20,13 @@ export class AppComponent {
 
   }
 
+  /**
+   * 戻る遷移ボタン押下
+   */
+  onBACK() {
+    this.delivery.backScreen();
+  }
+
   // サンプル
   // ボタン押下で、InvalidatePropイベントを発生させる
   onDebugBasicButton() {

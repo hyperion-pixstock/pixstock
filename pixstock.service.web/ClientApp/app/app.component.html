@@ -9,6 +9,7 @@
     <h3>Basic Buttons</h3>
     <div class="button-row">
       <div>
+          <button mat-button (click)="onBACK()" color="primary">戻る遷移</button><br>
         <button mat-button (click)="onTRNS_TOPSCREEN()" color="primary">TRNS_TOPSCREEN</button><br>
         <button mat-button (click)="onTrnsFinder()" color="primary">ファインダ画面表示</button><br>
         <button mat-button (click)="onACT_REQINVALIDATE_CATEGORYTREE()" color="primary">ACT_REQINVALIDATE_CATEGORYTREE</button>
@@ -17,7 +18,7 @@
       </div>
     </div>
 
-    <div >
+    <div style="height:100%" >
       <dashboard *ngIf="viewModel.screenStatus.dashboard"></dashboard>
       <preview *ngIf="viewModel.screenStatus.preview"></preview>
       <finder *ngIf="viewModel.screenStatus.finder"></finder>
@@ -25,113 +26,6 @@
 
     <!--Footer-->
     <footer class="page-footer mdb-color text-center text-md-left pt-4 mt-4">
-
-      <!--Footer Links-->
-      <div class="container">
-        <div class="row">
-
-          <!--First column-->
-          <div class="col-md-3 offset-md-1">
-            <h5 class="title">Footer Content </h5>
-            <p>Here you can use rows and columns here to organize your footer content.</p>
-          </div>
-          <!--/.First column-->
-
-          <hr class="hidden-md-up">
-
-          <!--Second column-->
-          <div class="col-md-2 offset-md-1">
-            <h5 class="title">Links</h5>
-            <ul class="list-unstyled">
-              <li>
-                <a href="#!">Link 1</a>
-              </li>
-              <li>
-                <a href="#!">Link 2</a>
-              </li>
-              <li>
-                <a href="#!">Link 3</a>
-              </li>
-              <li>
-                <a href="#!">Link 4</a>
-              </li>
-            </ul>
-          </div>
-          <!--/.Second column-->
-
-          <hr class="hidden-md-up">
-
-          <!--Third column-->
-          <div class="col-md-2">
-            <h5 class="title">Links</h5>
-            <ul class="list-unstyled">
-              <li>
-                <a href="#!">Link 1</a>
-              </li>
-              <li>
-                <a href="#!">Link 2</a>
-              </li>
-              <li>
-                <a href="#!">Link 3</a>
-              </li>
-              <li>
-                <a href="#!">Link 4</a>
-              </li>
-            </ul>
-          </div>
-          <!--/.Third column-->
-
-          <hr class="hidden-md-up">
-
-          <!--Fourth column-->
-          <div class="col-md-2">
-            <h5 class="title">Links</h5>
-            <ul class="list-unstyled">
-              <li>
-                <a href="#!">Link 1</a>
-              </li>
-              <li>
-                <a href="#!">Link 2</a>
-              </li>
-              <li>
-                <a href="#!">Link 3</a>
-              </li>
-              <li>
-                <a href="#!">Link 4</a>
-              </li>
-            </ul>
-          </div>
-          <!--/.Fourth column-->
-
-        </div>
-      </div>
-      <!--/.Footer Links-->
-
-      <hr>
-
-      <!--Call to action-->
-      <div class="call-to-action text-center py-3">
-        <ul class="list-unstyled list-inline">
-          <li class="list-inline-item">
-            <h5>Register for free</h5>
-          </li>
-          <li class="list-inline-item">
-            <a href="" class="btn btn-danger waves-light btn-rounded" mdbWavesEffect>Sign up!</a>
-          </li>
-        </ul>
-      </div>
-      <!--/.Call to action-->
-
-      <hr>
-      <!--Copyright-->
-      <div class="footer-copyright text-center py-3">
-        <div class="container-fluid">
-          © 2018 Copyright:
-          <a href="https://www.pixstock.service.web.com"> pixstock.service.web.com </a>
-
-        </div>
-      </div>
-      <!--/.Copyright-->
 
     </footer>
     <!--/.Footer-->

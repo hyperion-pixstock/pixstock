@@ -23,8 +23,7 @@ export class NaviService {
       console.debug(this.LOGEVENT, "[UpdateView$] - IN");
       console.debug(this.LOGEVENT, "[UpdateView$] レスポンス:", response);
 
-      let lastPos = response.UpdateList.length;
-      let screenName = response.UpdateList[lastPos - 1].ScreenName;
+      let screenName = response.NextScreenName;
       console.debug(this.LOGEVENT, "[UpdateView$] ScrrenName:", screenName);
 
       switch (screenName) {

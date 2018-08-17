@@ -78,6 +78,9 @@ export class CourierService {
         case "PreviewUrl":
           this.previewUrl(response);
           break;
+        case "PreviewContent":
+          this.viewModel.PreviewContent = JSON.parse(response.Value) as Content;
+          break;
         default:
           console.warn(this.LOGEVENT, "[invalidateProp$] 処理できないプロパティ名", response.PropertyName);
           break;
@@ -152,7 +155,6 @@ export class CourierService {
     let objValue = JSON.parse(response.Value) as string;
     this.viewModel.PreviewUrl = this.sanitizer.bypassSecurityTrustUrl(objValue);
   }
-
 }
 
 /**

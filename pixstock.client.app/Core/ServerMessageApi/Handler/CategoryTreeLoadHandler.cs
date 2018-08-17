@@ -43,9 +43,12 @@ namespace pixstock.client.app.Core.ServerMessageApi.Handler {
         cacheKey += categoryId;
 
         if (!mMemoryCache.TryGetValue (cacheKey, out Category[] s)) {
-          var dao_cat = new CategoryDao();
-          var category = dao_cat.LoadCategory(categoryId);
-          s = category.LinkSubCategoryList.ToArray();
+          var dao_cat = new CategoryDao ();
+          var category = dao_cat.LoadCategory (categoryId);
+          if (category == null) {
+            throw new ApplicationException ($"カテゴリID({categoryId})の読み込みに失敗しました。");
+          }
+          s = category.LinkSubCategoryList.ToArray ();
 
           var cacheEntryOptions = new MemoryCacheEntryOptions ()
             .SetSlidingExpiration (TimeSpan.FromSeconds (3));

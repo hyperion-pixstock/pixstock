@@ -51,6 +51,9 @@ export interface IpcUpdateViewResponse {
 
   /** パラメータ */
   Parameter: object;
+
+  /** 遷移先画面名称 */
+  NextScreenName: string; // 空文字の場合もあります
 }
 
 export interface UpdateViewRequestItem {

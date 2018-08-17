@@ -7,4 +7,8 @@ export interface Content {
   ThumbnailKey: string;
   Caption: string;
   Comment: string;
+  ArchiveFlag: Boolean;
+  ReadableFlag: Boolean;
+  StarRating: number;
+
 }
