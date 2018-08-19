@@ -1,37 +1,59 @@
-namespace Pixstock.Service.Web
-{
-    public class AppSettings
-    {
-        /// <summary>
-        /// アプリケーションが使用するフォルダの基本パスを設定、または取得します。
-        /// </summary>
-        /// <returns></returns>
-        public string ApplicationDirectoryBasePath { get; set; }
+namespace Pixstock.Service.Web {
+  /// <summary>
+  /// アプリケーション設定モデル
+  /// </summary>
+  public class AppSettings {
+    /// <summary>
+    /// アプリケーションが使用するフォルダの基本パスを設定、または取得します。
+    /// </summary>
+    /// <returns></returns>
+    public string ApplicationDirectoryBasePath { get; set; }
 
-        /// <summary>
-        /// "ApplicationDirectoryBasePath"が示すディレクトリが、絶対パスを示しているか
-        /// </summary>
-        /// <returns></returns>
-        public bool AbsoluteApplicationDirectoryBase { get; set; }
+    /// <summary>
+    /// "ApplicationDirectoryBasePath"が示すディレクトリが、絶対パスを示しているか
+    /// </summary>
+    /// <returns></returns>
+    public bool AbsoluteApplicationDirectoryBase { get; set; }
 
-        /// <summary>
-        /// データベース初期化で使用するSQLファイルのリソースパス
-        /// </summary>
-        /// <returns></returns>
-        public string InitializeSqlAppDb { get; set; }
+    /// <summary>
+    /// データベース初期化で使用するSQLファイルのリソースパス
+    /// </summary>
+    /// <returns></returns>
+    public string InitializeSqlAppDb { get; set; }
 
-        /// <summary>
-        /// デフォルトワークスペース
-        /// </summary>
-        /// <returns></returns>
-        public DefaultWorkspace Workspace { get; set; }
+    /// <summary>
+    /// デフォルトワークスペース
+    /// </summary>
+    /// <returns></returns>
+    public DefaultWorkspace Workspace { get; set; }
 
-        public class DefaultWorkspace
-        {
-            public string Name { get; set; }
-            public bool RelativeApplicationDirectoryBasePath { get; set; }
-            public string VirtualPath { get; set; }
-            public string PhysicalPath { get; set; }
-        }
+    /// <summary>
+    /// デフォリトワークスペース情報
+    /// </summary>
+    public class DefaultWorkspace {
+      /// <summary>
+      /// ワークスペース名称
+      /// </summary>
+      /// <value></value>
+      public string Name { get; set; }
+
+      /// <summary>
+      /// ワークスペースのディレクトリパス
+      /// </summary>
+      /// <value></value>
+      public bool RelativeApplicationDirectoryBasePath { get; set; }
+
+      /// <summary>
+      /// VFS用の格納パス
+      /// </summary>
+      /// <value></value>
+      public string VirtualPath { get; set; }
+
+      /// <summary>
+      /// VFSの格納パス
+      /// </summary>
+      /// <value></value>
+      public string PhysicalPath { get; set; }
     }
+  }
 }

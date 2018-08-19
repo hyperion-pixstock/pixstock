@@ -6,18 +6,19 @@ using Pixstock.Service.Infra.Model;
 using Pixstock.Service.Infra.Repository;
 using Pixstock.Service.Model;
 
-namespace Pixstock.Service.Web.Controllers
-{
+namespace Pixstock.Service.Web.Controllers {
   /// <summary>
   /// サムネイル操作関連APIコントローラ
   /// </summary>
-  [Route("aapi/[controller]")]
-  public class ThumbnailController : Controller
-  {
+  [Route ("aapi/[controller]")]
+  public class ThumbnailController : Controller {
     IThumbnailRepository thumbnailRepository;
 
-    public ThumbnailController(IThumbnailRepository thumbnailRepository)
-    {
+    /// <summary>
+    /// コンストラクタ
+    /// /// </summary>
+    /// <param name="thumbnailRepository"></param>
+    public ThumbnailController (IThumbnailRepository thumbnailRepository) {
       this.thumbnailRepository = thumbnailRepository;
     }
 
@@ -26,26 +27,22 @@ namespace Pixstock.Service.Web.Controllers
     /// </summary>
     /// <param name="thumbnailKey">サムネイルハッシュ、またはサムネイル情報キー</param>
     /// <returns>サムネイル画像のバイナリデータ</returns>
-    [HttpGet("{thumbnailKey}")]
-    public IActionResult FetchThumbnail(string thumbnailKey)
-    {
+    [HttpGet ("{thumbnailKey}")]
+    public IActionResult FetchThumbnail (string thumbnailKey) {
       long thumbnailId = 0L;
       IThumbnail thumbnail = null;
-      if (long.TryParse(thumbnailKey, out thumbnailId))
-      {
-        thumbnail = thumbnailRepository.Load(thumbnailId);
+      if (long.TryParse (thumbnailKey, out thumbnailId)) {
+        thumbnail = thumbnailRepository.Load (thumbnailId);
+      } else {
+        thumbnail = thumbnailRepository.FindByKey (thumbnailKey).FirstOrDefault ();
       }
-      else
-      {
-        thumbnail = thumbnailRepository.FindByKey(thumbnailKey).FirstOrDefault();
-      }
-      if (thumbnail == null) throw new ApplicationException(string.Format("サムネイル画像({0})が見つかりません", thumbnailKey));
+      if (thumbnail == null) throw new ApplicationException (string.Format ("サムネイル画像({0})が見つかりません", thumbnailKey));
 
       // リソースの有効期限等を決定する
       //DateTimeOffset now = DateTime.Now;
       //var etag = new EntityTagHeaderValue("\"" + Guid.NewGuid().ToString() + "\"");
 
-      return new FileContentResult(thumbnail.BitmapBytes, thumbnail.MimeType);
+      return new FileContentResult (thumbnail.BitmapBytes, thumbnail.MimeType);
     }
   }
 }

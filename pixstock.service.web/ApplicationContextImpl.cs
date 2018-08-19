@@ -24,10 +24,16 @@ using SimpleInjector.Lifestyles;
 [assembly: InternalsVisibleTo("Pixstock.Service.Web.Tests")]
 namespace Pixstock.Service.Web
 {
+  /// <summary>
+  /// アプリケーションコンテキスト
+  /// </summary>
   public class ApplicationContextImpl : IApplicationContext
   {
     private readonly Logger _logger;
 
+    /// <summary>
+    /// リリースバリエーション別パラメータ
+    /// </summary>
     public IBuildAssemblyParameter _AssemblyParameter;
 
     private string _ApplicationDirectoryPath;
@@ -36,18 +42,37 @@ namespace Pixstock.Service.Web
 
     private SimpleInjector.Container mContainer;
 
+    /// <summary>
+    /// アプリケーションディレクトリ
+    /// </summary>
     public string ApplicationDirectoryPath => _ApplicationDirectoryPath;
 
+    /// <summary>
+    /// アプリケーションアセンブリのバージョン
+    /// </summary>
+    /// <value></value>
     public System.Diagnostics.FileVersionInfo ApplicationFileVersionInfo
     {
       get;
       private set;
     }
 
+    /// <summary>
+    /// データベースファイルを格納するディレクトリパス
+    /// </summary>
+    /// <returns></returns>
     public string DatabaseDirectoryPath => Path.Combine(ApplicationDirectoryPath, @"db");
 
+    /// <summary>
+    /// 拡張機能ファイルを格納するディレ浮くトリパス
+    /// </summary>
+    /// <returns></returns>
     public string ExtentionDirectoryPath => Path.Combine(ApplicationDirectoryPath, @"extention");
 
+    /// <summary>
+    /// コンストラクタ
+    /// </summary>
+    /// <param name="parameter"></param>
     public ApplicationContextImpl(IBuildAssemblyParameter parameter)
     {
       _logger = LogManager.GetCurrentClassLogger();
@@ -113,6 +138,9 @@ namespace Pixstock.Service.Web
       container.RegisterInstance<VspFileUpdateWatchManager>(vspFileUpdateWatchManager);
     }
 
+    /// <summary>
+    /// 初期化
+    /// </summary>
     public void Initialize()
     {
       _logger.Trace("アプリケーションの初期化を開始します");
@@ -328,7 +356,9 @@ namespace Pixstock.Service.Web
     /// 現在のバージョンからマイグレーションするファイルがリソースファイルにあるか探します。
     /// リソースファイルがある場合はそのファイルに含まれるSQLを実行し、ファイル名からマイグレーション後のバージョンを取得します。
     /// </summary>
-    /// <param name="version">現在のバージョン。アップグレード元のバージョン。</param>
+    /// <param name="dbselect"></param>
+    /// <param name="version"></param>
+    /// <param name="dbc"></param>
     /// <returns>次のバージョン番号。マイグレーションを実施しなかった場合は、versionの値がそのまま帰ります。</returns>
     private string UpgradeFromResource(string dbselect, string version, KatalibDbContext @dbc)
     {

@@ -2,38 +2,44 @@ using Microsoft.AspNetCore.Mvc;
 using Pixstock.Base.AppIf.Sdk;
 using Pixstock.Service.Infra.Repository;
 
-namespace Pixstock.Service.Web.Controllers
-{
+namespace Pixstock.Service.Web.Controllers {
   /// <summary>
-  /// 
+  ///
   /// </summary>
-  [Route("aapi/[controller]")]
-  public class DevelopController : Controller
-  {
+  [Route ("aapi/[controller]")]
+  public class DevelopController : Controller {
     private readonly IWorkspaceRepository workspaceRepository;
-
-    public DevelopController(IWorkspaceRepository workspaceRepository)
-    {
+    /// <summary>
+    /// コンストラクタ
+    /// </summary>
+    /// <param name="workspaceRepository"></param>
+    public DevelopController (IWorkspaceRepository workspaceRepository) {
       this.workspaceRepository = workspaceRepository;
     }
 
-    [HttpGet("version")]
-    public ResponseAapi<string> Get_Version()
-    {
-      var response = new ResponseAapi<string>();
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet ("version")]
+    public ResponseAapi<string> Get_Version () {
+      var response = new ResponseAapi<string> ();
       response.Value = "1.0.0";
       return response;
     }
 
-    [HttpGet("register_workspace")]
-    public ResponseAapi<string> Get_RegisterWorkspace()
-    {
-      var workspace = workspaceRepository.New();
+    /// <summary>
+    ///
+    /// /// </summary>
+    /// <returns></returns>
+    [HttpGet ("register_workspace")]
+    public ResponseAapi<string> Get_RegisterWorkspace () {
+      var workspace = workspaceRepository.New ();
       workspace.Name = "Private";
       workspace.PhysicalPath = "/home/atachi/PixstockSample";
-      workspaceRepository.Save();
+      workspaceRepository.Save ();
 
-      var response = new ResponseAapi<string>();
+      var response = new ResponseAapi<string> ();
       response.Value = "1.0.0";
       return response;
     }

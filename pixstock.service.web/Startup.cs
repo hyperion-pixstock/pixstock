@@ -76,7 +76,6 @@ namespace Pixstock.Service.Web
     /// </summary>
     /// <param name="app">The application.</param>
     /// <param name="env">The hosting environment</param>
-    /// <param name="loggerFactory">ログ</param>
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
       InitializeContainer(app);

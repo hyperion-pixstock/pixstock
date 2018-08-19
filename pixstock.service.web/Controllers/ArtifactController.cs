@@ -11,6 +11,9 @@ using Pixstock.Service.Model;
 using Pixstock.Service.Web.Builder;
 
 namespace Pixstock.Service.Web.Controllers {
+  /// <summary>
+  /// コンテント情報コントローラー
+  /// </summary>
   [Route ("aapi/[controller]")]
   public class ArtifactController : Controller {
     private static Logger _logger = LogManager.GetCurrentClassLogger ();
@@ -21,6 +24,12 @@ namespace Pixstock.Service.Web.Controllers {
 
     readonly IFileMappingInfoRepository mFileMappingInfoRepository;
 
+    /// <summary>
+    /// コンストラクタ
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="contentRepository"></param>
+    /// <param name="fileMappingInfoRepository"></param>
     public ArtifactController (
       ApiResponseBuilder builder,
       IContentRepository contentRepository,
