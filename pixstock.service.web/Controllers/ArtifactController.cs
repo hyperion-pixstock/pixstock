@@ -7,6 +7,7 @@ using Pixstock.Base.AppIf.Sdk;
 using Pixstock.Service.Infra.Exception;
 using Pixstock.Service.Infra.Model;
 using Pixstock.Service.Infra.Repository;
+using Pixstock.Service.Model;
 using Pixstock.Service.Web.Builder;
 
 namespace Pixstock.Service.Web.Controllers {
@@ -103,6 +104,32 @@ namespace Pixstock.Service.Web.Controllers {
     }
 
     /// <summary>
+    /// コンテント情報を永続化します
+    /// </summary>
+    /// <param name="id">更新対象のコンテントID</param>
+    /// <param name="content">更新オブジェクト</param>
+    /// <returns></returns>
+    [HttpPut ("{id}/a")]
+    public ResponseAapi<Boolean> UpdateContent (long id, [FromBody] Content content) {
+      _logger.Debug ("IN");
+      var response = new ResponseAapi<Boolean> ();
+
+      var targetContent = mContentRepository.Load (id);
+      if (content == null) throw new InterfaceOperationException ("コンテント情報が見つかりません");
+
+      targetContent.ArchiveFlag = content.ArchiveFlag;
+      targetContent.Caption = content.Caption;
+      targetContent.Comment = content.Comment;
+      targetContent.StarRating = content.StarRating;
+      targetContent.Name = content.Name;
+
+      mContentRepository.Save ();
+      response.Value = true;
+      _logger.Debug ("OUT");
+      return response;
+    }
+
+    /// <summary>
     /// コンテントのステータス更新処理を実行する
     /// </summary>
     /// <param name="id">更新対象のコンテントID</param>
@@ -127,8 +154,8 @@ namespace Pixstock.Service.Web.Controllers {
           break;
       }
 
-      if(result) {
-        mContentRepository.Save();
+      if (result) {
+        mContentRepository.Save ();
       }
 
       response.Value = result;

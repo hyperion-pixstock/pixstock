@@ -32,6 +32,7 @@ public class CLS_ACT_RESINVALIDATE_CONTENT : Events {}
 public class CLS_CategorySelectBtnClick : Events {}
 public class CLS_ACT_ContinueCategoryList : Events {}
 public class CLS_ACT_UpperCategoryList : Events {}
+public class CLS_ACT_STORE_CONTENTPROP : Events {}
 public class CLS_ACT_DISPLAY_PREVIEWCURRENTLIST : Events {}
 public class CLS_RESPONSE_GETCONTENT : Events {}
 public class CLS_TRNS_TOPSCREEN : Events {}
@@ -84,6 +85,7 @@ public partial class Events : WorkflowEventBase {
 	public static CLS_CategorySelectBtnClick CategorySelectBtnClick { get; } = new CLS_CategorySelectBtnClick();
 	public static CLS_ACT_ContinueCategoryList ACT_ContinueCategoryList { get; } = new CLS_ACT_ContinueCategoryList();
 	public static CLS_ACT_UpperCategoryList ACT_UpperCategoryList { get; } = new CLS_ACT_UpperCategoryList();
+	public static CLS_ACT_STORE_CONTENTPROP ACT_STORE_CONTENTPROP { get; } = new CLS_ACT_STORE_CONTENTPROP();
 	public static CLS_ACT_DISPLAY_PREVIEWCURRENTLIST ACT_DISPLAY_PREVIEWCURRENTLIST { get; } = new CLS_ACT_DISPLAY_PREVIEWCURRENTLIST();
 	public static CLS_RESPONSE_GETCONTENT RESPONSE_GETCONTENT { get; } = new CLS_RESPONSE_GETCONTENT();
 	public static CLS_TRNS_TOPSCREEN TRNS_TOPSCREEN { get; } = new CLS_TRNS_TOPSCREEN();

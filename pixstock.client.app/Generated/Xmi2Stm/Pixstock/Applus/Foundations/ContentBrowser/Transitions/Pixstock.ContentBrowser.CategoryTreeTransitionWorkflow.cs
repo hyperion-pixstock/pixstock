@@ -109,6 +109,9 @@ In(States.FinderBase)
 In(States.FinderBase)
 .On(Events.ACT_UpperCategoryList)
 .Execute<object>(ACT_UpperCategoryList);
+In(States.Previews)
+.On(Events.ACT_STORE_CONTENTPROP)
+.Execute<object>(ACT_STORE_CONTENTPROP);
 In(States.Preview)
 .ExecuteOnEntry(__FTC_Event_Preview_Entry);
 In(States.Preview)
@@ -208,6 +211,11 @@ public virtual async Task ACT_UpperCategoryList(object param) {
 	Events.ACT_UpperCategoryList.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
 	await OnACT_UpperCategoryList(param);
 	Events.ACT_UpperCategoryList.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
+}
+public virtual async Task ACT_STORE_CONTENTPROP(object param) {
+	Events.ACT_STORE_CONTENTPROP.FireInvokeWorkflowEvent(new WorkflowMessageEventArgs(param));
+	await OnACT_STORE_CONTENTPROP(param);
+	Events.ACT_STORE_CONTENTPROP.FireCallbackWorkflowEvent(new WorkflowMessageEventArgs(param));
 }
 public virtual async Task __FTC_Event_Preview_Entry() {
 ICollection<int> ribbonMenuEventId = new List<int>{  };

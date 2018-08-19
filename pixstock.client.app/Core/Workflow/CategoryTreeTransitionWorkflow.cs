@@ -462,5 +462,36 @@ namespace Pixstock.Applus.Foundations.ContentBrowser.Transitions {
       var intentManager = mContainer.GetInstance<IIntentManager> ();
       intentManager.AddIntent (ServiceType.FrontendIpc, "UpdateProp", "ContentList");
     }
+
+    /// <summary>
+    ///コンテント情報永続化メッセージのハンドラ
+    /// </summary>
+    /// <param name="param"></param>
+    /// <returns></returns>
+    async Task OnACT_STORE_CONTENTPROP (object param) {
+      this.mLogger.Debug ("IN - {@Param}", param);
+      var intentManager = mContainer.GetInstance<IIntentManager> ();
+
+      StoreContentPropParameter paramObject = new StoreContentPropParameter ();
+      paramObject.Content = new Content ();
+      JsonConvert.PopulateObject (param.ToString (), paramObject);
+
+      switch (paramObject.Hint) {
+        case "Invalidate":
+          this.mLogger.Debug ("永続化方法をInvalidateとして処理を実行します");
+          this.mLogger.Debug (JsonConvert.SerializeObject(paramObject.Content));
+          intentManager.AddIntent (ServiceType.Server, "StoreData", new StoreDataHandler.HandlerParameter {
+            Value = paramObject.Content,
+              ModelType = "Content",
+              UpdateNotificationFlag = true
+          });
+          break;
+        default:
+          this.mLogger.Warn ($"不明なオペレーション({@paramObject.Hint})のため実行しませんでした。");
+          break;
+      }
+
+      this.mLogger.Debug ("OUT");
+    }
   }
 }

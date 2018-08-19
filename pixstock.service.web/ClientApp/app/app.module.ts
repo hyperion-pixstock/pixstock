@@ -1,6 +1,6 @@
 import { NgModule, NgZone } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule, MatCheckboxModule, MatIconModule, MatProgressBarModule, MatProgressSpinnerModule, MatSidenavModule, MatTreeModule } from '@angular/material';
+import { MatButtonModule, MatCheckboxModule, MatIconModule, MatProgressBarModule, MatProgressSpinnerModule, MatSidenavModule, MatTreeModule, MatInputModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
@@ -36,7 +36,7 @@ import { PreviewScreen } from './components/screen/preview/preview.screen';
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
-    MatButtonModule, MatCheckboxModule,
+    MatButtonModule, MatCheckboxModule, MatInputModule,
     MatTreeModule, MatIconModule,
     MatProgressBarModule, MatProgressSpinnerModule,
     MatSidenavModule,

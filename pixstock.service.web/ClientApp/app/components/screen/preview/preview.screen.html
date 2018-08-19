@@ -7,6 +7,15 @@
   <button mat-button (click)="onNextPreview()" color="primary">次へ</button>
 </div>
 
+<form *ngIf="viewmodel.PreviewContent != null">
+  <mat-form-field>
+    <textarea matInput placeholder="コメント" [(ngModel)]="viewmodel.PreviewContent.Comment" name="comment"></textarea>
+  </mat-form-field>
+  <div>
+    <button mat-button (click)="onUpdateContentAttribute()">保存</button>
+  </div>
+</form>
+
 <img [src]="viewmodel.PreviewUrl" class="img-fluid">
 
 

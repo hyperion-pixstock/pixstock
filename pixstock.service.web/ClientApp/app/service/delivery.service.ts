@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { ViewModel } from "./../viewmodel";
 import { MessagingService } from "./messaging.service";
 import { IntentMessage, IpcMessage } from "./contract/delivery.contract";
+import { Content } from "../model/content.model";
 
 /**
  * BFFへインテント・メッセージを送信するサービス
@@ -103,6 +104,25 @@ export class DeliveryService {
     intentMessage.Parameter = categoryId.toString();
 
     this.send(intentMessage);
+  }
+
+  /**
+   * コンテントの更新
+   *
+   * @param content
+   */
+  public updateContent(content: Content) {
+    console.info("[Pixstock][Delivery][updateContent] IN");
+    var intentMessage = new IntentMessage();
+    intentMessage.ServiceType = "Workflow";
+    intentMessage.MessageName = "ACT_STORE_CONTENTPROP";
+    intentMessage.Parameter = JSON.stringify({
+      Hint: "Invalidate",
+      Content: content
+    });
+
+    this.send(intentMessage);
+    console.info("[Pixstock][Delivery][updateContent] OUT");
   }
 
   /**

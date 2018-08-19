@@ -41,8 +41,17 @@ export class PreviewScreen implements AfterViewInit {
   /**
    * 「次へ」ボタン押下時のイベントハンドラ
    */
-  onNextPreview(){
+  onNextPreview() {
     this.deliverySrv.invalidatePreviewContentListNext();
+  }
+
+  /**
+   *
+   */
+  onUpdateContentAttribute() {
+    console.debug("入力文字列", this.viewmodel.PreviewContent.Comment);
+    // 表示中のコンテントを更新する
+    this.deliverySrv.updateContent(this.viewmodel.PreviewContent);
   }
 }
 
