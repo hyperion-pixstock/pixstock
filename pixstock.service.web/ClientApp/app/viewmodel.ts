@@ -2,6 +2,7 @@
 import { Category } from "./model/category.model";
 import { Content } from "./model/content.model";
 import { SafeUrl } from "@angular/platform-browser";
+import { DynamicFlatNode } from "ClientApp/app/utils/dynamic-flat-node";
 
 /**
  * ビューモデル
@@ -40,6 +41,11 @@ export class ViewModel {
    * プレビュー画面の画像URL
    */
   PreviewUrl: SafeUrl = null;
+
+  /**
+   * カテゴリツリーのノード配列
+   */
+  CategoryTreeNodes: DynamicFlatNode[] = null;
 }
 
 /**

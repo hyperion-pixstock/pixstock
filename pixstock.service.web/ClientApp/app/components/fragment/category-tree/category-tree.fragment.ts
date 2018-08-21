@@ -1,40 +1,14 @@
 import { CollectionViewer, SelectionChange } from "@angular/cdk/collections";
 import { FlatTreeControl } from "@angular/cdk/tree";
-import { Component, Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, merge } from "rxjs";
+import { Component, Injectable, OnDestroy, OnInit } from "@angular/core";
+import { BehaviorSubject, Observable, merge, Subscription } from "rxjs";
 import { map } from "rxjs/operators";
 import { Category } from "../../../model/category.model";
 import { IpcUpdatePropResponse } from "../../../service/contract/response.contract";
 import { DeliveryService } from "../../../service/delivery.service";
-import { MessagingService } from "../../../service/messaging.service";
 import { CourierService } from "../../../service/courier.service";
-
-
-/** Flat node with expandable and level information */
-export class DynamicFlatNode {
-  /**
-   * コンストラクタ
-   *
-   * @param item
-   * @param level
-   * @param expandable
-   * @param isLoading
-   */
-  constructor(
-    private delivery: DeliveryService | null,
-    public item: Category,
-    public level = 1,
-    public expandable = false,
-    public isLoading = false) {
-  }
-
-  showContentList() {
-    console.info("ノードボタンをクリック ", this.item.Id);
-    if (this.delivery != null) {
-      this.delivery.updateContentList(this.item.Id);
-    }
-  }
-}
+import { DynamicFlatNode } from "ClientApp/app/utils/dynamic-flat-node";
+import { ViewModel } from "ClientApp/app/viewmodel";
 
 /**
  * Database for dynamic data. When expanding a node in the tree, the data source will need to fetch
@@ -83,7 +57,11 @@ export class DynamicDatabase {
 @Injectable()
 export class DynamicDataSource {
 
+  private LOGEVENT: string = "[Pixstock][DynamicDataSource]";
+
   dataChange = new BehaviorSubject<DynamicFlatNode[]>([]);
+
+  invalidateProp: Subscription | null;
 
   get data(): DynamicFlatNode[] { return this.dataChange.value; }
   set data(value: DynamicFlatNode[]) {
@@ -91,27 +69,27 @@ export class DynamicDataSource {
     this.dataChange.next(value);
   }
 
-
   /**
    * コンストラクタ
    *
    * @param treeControl
-   * @param database
+   * @param viewmodel
    * @param messaging メッセージングサービス
    * @param delivery デリバリーサービス
    */
   constructor(
     private treeControl: FlatTreeControl<DynamicFlatNode>,
-    private database: DynamicDatabase,
+    private viewmodel: ViewModel,
     private courier: CourierService,
     private delivery: DeliveryService
   ) {
-    this.courier.invalidateProp$.subscribe(
+
+    this.invalidateProp = this.courier.invalidateProp$.subscribe(
       (response: IpcUpdatePropResponse) => {
         if (response == undefined) return;
         if (response.PropertyName != "CategoryTree") return;
 
-        console.info("[DynamicDataSource][invalidateProp$] subscribe - IN", response);
+        console.info(this.LOGEVENT, "[invalidateProp$] IN", response);
         let categoryId_parent: number = +response.Hint;
         const node = this.getNode(categoryId_parent);
         const index = this.data.indexOf(node); // 子階層を追加する親階層ノードのFlatNodeList内の位置を取得する
@@ -129,8 +107,16 @@ export class DynamicDataSource {
         // notify the change
         this.dataChange.next(this.data);
         node.isLoading = false;
+
+        this.viewmodel.CategoryTreeNodes = this.data; // 現在のノード配列をViewModelでキャッシュする
       }
     );
+  }
+
+  dispose() {
+    if (this.invalidateProp != null) {
+      this.invalidateProp.unsubscribe();
+    }
   }
 
   connect(collectionViewer: CollectionViewer): Observable<DynamicFlatNode[]> {
@@ -167,15 +153,12 @@ export class DynamicDataSource {
    * Toggle the node, remove from display list
    */
   toggleNode(node: DynamicFlatNode, expand: boolean) {
+    console.info(this.LOGEVENT, "[toggleNode] IN", expand, node);
+
     node.isLoading = true;
 
     if (expand) {
-      if (node.item.Id != 1 && node.item.Id != 2) {
-        // DEBUG: デバッグコード
-        console.info("デバッグモード中につき、カテゴリIDが所定の値以外では処理を行わない");
-        return;
-      }
-
+      node.opened = true;
       this.delivery.updateCategoryTree(node.item.Id); // カテゴリツリー取得呼び出し
     } else {
       setTimeout(() => {
@@ -187,9 +170,14 @@ export class DynamicDataSource {
 
         // notify the change
         this.dataChange.next(this.data);
+        node.opened = false;
         node.isLoading = false;
+
+        this.viewmodel.CategoryTreeNodes = this.data; // 現在のノード配列をViewModelでキャッシュする
       }, 500);
     }
+
+    console.info(this.LOGEVENT, "[toggleNode] OUT");
   }
 }
 
@@ -202,7 +190,10 @@ export class DynamicDataSource {
   styleUrls: ['./category-tree.fragment.scss'],
   providers: [DynamicDatabase]
 })
-export class CategoryTreeFragment {
+export class CategoryTreeFragment implements OnInit, OnDestroy {
+
+  private LOGEVENT: string = "[Pixstock][CategoryTreeFragment]";
+
   treeControl: FlatTreeControl<DynamicFlatNode>;
 
   dataSource: DynamicDataSource;
@@ -224,10 +215,34 @@ export class CategoryTreeFragment {
     private database: DynamicDatabase,
     private courier: CourierService,
     private delivery: DeliveryService,
+    private viewmodel: ViewModel
   ) {
-    this.treeControl = new FlatTreeControl<DynamicFlatNode>(this.getLevel, this.isExpandable);
-    this.dataSource = new DynamicDataSource(this.treeControl, database, courier, delivery);
 
-    this.dataSource.data = database.initialData();
   }
+
+  ngOnDestroy(): void {
+    console.debug(this.LOGEVENT, "[ngOnDestroy] IN");
+    this.dataSource.dispose();
+  }
+
+  ngOnInit(): void {
+    console.debug(this.LOGEVENT, "[ngOnInit] IN");
+
+    this.treeControl = new FlatTreeControl<DynamicFlatNode>(this.getLevel, this.isExpandable);
+    this.dataSource = new DynamicDataSource(this.treeControl, this.viewmodel, this.courier, this.delivery);
+
+    if (this.viewmodel.CategoryTreeNodes == null) {
+      this.dataSource.data = this.database.initialData();
+    } else {
+      this.dataSource.data = this.viewmodel.CategoryTreeNodes;
+
+      // 開かれているノードは、expandメソッドを適応する
+      for (const node of this.viewmodel.CategoryTreeNodes) {
+        if (node.opened) {
+          this.treeControl.expand(node);
+        }
+      }
+    }
+  }
+
 }
