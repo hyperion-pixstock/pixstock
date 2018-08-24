@@ -1,6 +1,14 @@
 Finder
 
-<category-tree></category-tree>
-<explorer-list (item-select)="onItemSelect($event)"></explorer-list>
+<div class="row">
+  <div class="col-4">
+      col-4<br>
+      <category-tree></category-tree>
+  </div>
+  <div class="col-8">
+      col-8<br>
+      <explorer-list (item-select)="onItemSelect($event)"></explorer-list>
+  </div>
+</div>
 
 ここまで
